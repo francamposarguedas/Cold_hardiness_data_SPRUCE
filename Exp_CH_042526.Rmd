@@ -36,6 +36,7 @@ library(dplyr)
 
 ```{r Importing CH data }
 
+
 dat_spr=read.csv("/Users/FranCampos/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Data_analysis_25/All_SPR_072125.csv")
 
 
