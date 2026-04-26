@@ -37,7 +37,7 @@ library(dplyr)
 ```{r Importing CH data }
 
 
-dat_spr=read.csv("/Users/FranCampos/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Cold_hardiness_data_SPRUCE/All_SPR_072125.csv")
+dat_spr=read.csv("/Users/FranCampos/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Cold_hardiness_data_SPRUCE/All_SPR_032826.csv")
 
 
 #Creating a season and date columns in dataset based on data from column Col & Date
@@ -1184,11 +1184,11 @@ fig_original_combined2
 
 # SECTION 5: QUALITATIVE FIGURE
 
-# How many observations per phase × classification?
-all_species_delta %>%
-  filter(!is.na(Process)) %>%
-  count(Classification, Process) %>%
-  print()
+# # How many observations per phase × classification?
+# all_species_delta %>%
+#   filter(!is.na(Process)) %>%
+#   count(Classification, Process) %>%
+#   print()
 
 # Any collections with no temperature data (Tmean_ic = NA)?
 all_species_delta %>%
