@@ -37,7 +37,7 @@ library(dplyr)
 ```{r Importing CH data }
 
 
-dat_spr=read.csv("/Users/FranCampos/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Data_analysis_25/All_SPR_072125.csv")
+dat_spr=read.csv("/Users/FranCampos/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Cold_hardiness_data_SPRUCE/All_SPR_072125.csv")
 
 
 #Creating a season and date columns in dataset based on data from column Col & Date
@@ -166,7 +166,7 @@ rename <- dplyr::rename
 
 #### Weather data at 2m 
 
-wdat_2=read.csv("/Users/FranCampos/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Data_analysis_25/SPR_weather_data_042526_v2.csv")
+wdat_2=read.csv("/Users/FranCampos/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Cold_hardiness_data_SPRUCE/SPR_weather_data_042526_v2.csv")
 
 str(wdat_2)
 
@@ -326,7 +326,7 @@ ggplot()+
 
 #### Weather data at 0m 
 
-wdat_0=read.csv("/Users/FranCampos/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Data_analysis_25/SPR_weather_data_042526_TS_0_avg.csv")
+wdat_0=read.csv("/Users/FranCampos/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Cold_hardiness_data_SPRUCE/SPR_weather_data_042526_TS_0_avg.csv")
 
 
 temps.hourly0 <- wdat_0 %>%
