@@ -1,5 +1,5 @@
 ---
-title: "Exp_CH_040726"
+title: "Exp_CH_051926"
 author: "Francisco Campos Arguedas"
 date: "2026-04-07"
 output: html_document
@@ -30,15 +30,12 @@ library(lme4)
 library(lmerTest)
 library(AICcmodavg)
 library(dplyr)
-
 ```
 
 
 ```{r Importing CH data }
 
-
 dat_spr=read.csv("/Users/FranCampos/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Cold_hardiness_data_SPRUCE/All_SPR_032826.csv")
-
 
 #Creating a season and date columns in dataset based on data from column Col & Date
 dat_spr$Season=substr(dat_spr$Col,10, 10)
@@ -75,8 +72,6 @@ for (i in levels(as.factor(dat_spr$Species))){
 rownames(resids) <- NULL
 dat_spr_2 <- resids[-(which(resids$student.resid > 2.95 | resids$student.resid < -2.95)),]
 
-# initial.ch.res <- subset(all.peaks.2025, deacc.days %in% 0)
-
 
 #### Initial CH
 
@@ -99,25 +94,15 @@ initial.ch <- initial.ch %>%
     Plot == "17" ~ "A",
   ))
 
-
-
-
 initial.ch <- initial.ch %>%
   filter(!(Species == "CHCA" & Sequence == "BJ"))
 
 table(initial.ch$Species, initial.ch$Collection)
 
 
-# slopes_ic_CHCA_RHGR <- slopes_ic_CHCA_RHGR %>%
-#   filter(Sequence != "AF")
-
-
-
-
 #### Verifying CH data looks fine
 
 #Plot is showing ICH per season for 4 years of data. All treatments together with lines. Change species to get their response and own graph.
-
 
 ggplot()+
   
@@ -150,19 +135,18 @@ ggplot()+
   
     coord_cartesian(xlim = c(as.Date("2021-08-15"), as.Date("2025-05-01")), ylim = c(-50, 0), expand = TRUE, default = FALSE, clip = "on")
 
-str(dat_spr_2)
+# str(dat_spr_2)
 
 ```
 
 
 ```{r Importing weather data at 2m }
 
-select <- dplyr::select
+select <- dplyr::select #adding these because I get issues sometimes with dyplr when running other codes
 summarise <- dplyr::summarise
 filter <- dplyr::filter
 mutate <- dplyr::mutate
 rename <- dplyr::rename
-
 
 #### Weather data at 2m 
 
@@ -247,8 +231,7 @@ ggplot() +
   theme(axis.text.x = element_text(angle=45))
 
 
-
-# Computing chill portions having an average per treatment (not taking into account plot)
+# Computing chill portions having an average per treatment
 
 wchill_2b <- wchill_2a %>%
   mutate(Date = as.Date(Date)) %>%  # Ensure Date is in YYYY-MM-DD format
@@ -261,8 +244,7 @@ wchill_2b <- wchill_2a %>%
     .groups = "drop"
   )
 
-
-#Chill portions graph having an average per treatment (not taking into account plot)
+#Chill portions graph having an average per treatment
 
 ggplot() +
     geom_point(data = wchill_2b, aes(x = Date, y = End_Chill, color = as.factor(Treatment)), size=0.5, alpha=0.5) + 
@@ -285,7 +267,6 @@ ggplot() +
     axis.text = element_text(size = 9),
     axis.ticks = element_line(size = 0.25, color = "black"),
     axis.ticks.length = unit(0.3, 'lines'),        axis.text.x = element_text(color = c("black"), angle = 45, vjust = 0.5, hjust = 0.5))
-
 
 
 wdat_2b <- temps.hourly %>%
@@ -414,7 +395,6 @@ wchill_0b <- wchill_0a %>%
 
 #Chill portions graph having an average per treatment (not taking into account plot)
 
-
 ggplot() +
     geom_point(data = wchill_0b, aes(x = Date, y = End_Chill, color = as.factor(Treatment)), size=0.5, alpha=0.5) + 
       geom_line(data = wchill_0b, aes(x = Date, y = End_Chill, color = as.factor(Treatment)), size=0.5, alpha=1) +
@@ -429,8 +409,6 @@ ggplot() +
   theme(axis.text.x = element_text(angle=45))
 
 
-
-
 wdat_0b <- temps.hourly0 %>%
   mutate(Year.Trt = paste(Year, Treatment, Plot, sep = ".")) %>%
   mutate(Date.time = as.POSIXct(Timestamp, format="%m/%d/%y %H:%H")) %>%
@@ -440,7 +418,6 @@ mutate(Tmax = max(Temp),
          Tmin = min(Temp),
          Tamp = Tmax-Tmin) %>%
   ungroup()
-
 
 
 #Plot is showing Tmin and Tmax per season for 4 years of data. 
@@ -462,7 +439,6 @@ ggplot()+
     axis.ticks = element_line(size = 0.25, color = "black"),
     axis.ticks.length = unit(0.3, 'lines'),        axis.text.x = element_text(color = c("black"), angle = 45, vjust = 0.5, hjust = 0.5))+
     coord_cartesian(xlim = c(as.Date("2021-08-15"), as.Date("2025-12-30")), ylim = c(-50, 50), expand = TRUE, default = FALSE, clip = "on")
-
 
 
 ```
@@ -498,7 +474,6 @@ collections_tbl <- enframe(unlist(date_mapping),
     # Season start is July 1 of the previous calendar year of the Season label
     Season_Start = as.Date(paste0(Season - 1, "-08-01"))
   )
-
 
 
 # --- Results containers ---
@@ -656,12 +631,11 @@ str(subset_data)
 
 initial.ch2 <- subset_data
 
- 
+
 ```
 
 
 ```{r Delta t vs Corrected T }
-
 
 str(Mean_all_collections)
 
@@ -684,8 +658,6 @@ Mean_all_collections_summary <- Mean_all_collections %>%
 
 
 Mean_all_collections_summary_2  <- Mean_all_collections_summary  %>% filter(Treatment != "-2.25")
-
-
 
 
 plot_deltaT <- ggplot() +
@@ -728,16 +700,8 @@ plot_deltaT <- ggplot() +
     x = expression(paste("Target temperature (", Delta, italic("T"), ", °C)")),
     y = expression(paste("Plot temperature (", Delta, italic("T"), ", °C)"))
   ) +
-  
-  
 
   facet_grid(.~Height)+
-  
-  # labs(
-  #   title = "",
-  #   x     = "Target ΔT (°C)",
-  #   y     = "Corrected ΔT (°C)"
-  # ) +
   
   theme_bw(base_size = 6) +
   theme(
@@ -758,10 +722,7 @@ plot_deltaT <- ggplot() +
 
 plot_deltaT
 
-
-
 # ggsave("Fig_deltaT_v4_all_v4.pdf", plot=plot_deltaT, width=4.0, height=2.2, units ="in", bg = "transparent", dpi = 300, path="~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures")
-
 
 range_summary <- Mean_all_collections_summary_2 %>%
   # filter(Treatment %in% c("0", "9")) %>%
@@ -773,11 +734,8 @@ range_summary <- Mean_all_collections_summary_2 %>%
     .groups = "drop"
   )
 
-View(range_summary)  
+# View(range_summary)  
 # print(range_summary) 
-
-
-
 
 ```
 
@@ -785,7 +743,7 @@ View(range_summary)
 
 ```{r Figure 2 and Figure S4}
 
-# --- 0) Helper: Season letter <-> numeric mapping
+#  Season letter & numeric mapping
 season_map <- tibble::tribble(
   ~Season_letter, ~Season_num,
   "A", 2022,
@@ -794,9 +752,7 @@ season_map <- tibble::tribble(
   "D", 2025
 )
 
-# --- 1) Start from your Mean_all_collections (built earlier)
-
-# Add Season letters for joining to initial.ch
+#  Add Season letters for joining to initial.ch
 temps_all <- Mean_all_collections %>%
   inner_join(season_map, by = c("Season" = "Season_num")) %>%
   dplyr::rename(Season_chr = Season_letter) %>%
@@ -809,7 +765,7 @@ temps_all <- Mean_all_collections %>%
   dplyr::select(Season_chr, Sequence, Height, Plot_chr, Treatment_chr,
          Mean_Temp, ref_temp, Corrected_T)
 
-# Split by height and make TWO flavors:
+# Split by height:
 #   (a) Plot-level     (keeps Plot)
 #   (b) Treatment-only (averaged across plots; no Plot key)
 temps_2m_plot <- temps_all %>%
@@ -844,7 +800,7 @@ temps_0m_trt  <- temps_0m_plot %>%
 str(temps_0m_trt)
 
 
-# --- 2) Prepare initial.ch keys
+# Prepare initial.ch keys
 initial_keys <- initial.ch %>%
   mutate(
     Season_chr    = as.character(Season),          # "A"/"B"/"C"/"D"
@@ -856,7 +812,7 @@ initial_keys <- initial.ch %>%
 str(initial_keys)
 
 
-# --- 3) LEFT JOIN with plot-level temps first, then treatment-level fallback
+# Left join with plot-level temps first, then treatment-level
 initial_joined <- initial_keys %>%
   # 2m joins
   left_join(
@@ -893,7 +849,6 @@ initial_joined <- initial_keys %>%
 
 str(initial_joined)
 
-# --- 4) Optional: keep your legacy Corrected_T columns or replace them
 
 initial.ch_joined <- initial_joined %>%
   mutate(
@@ -947,7 +902,7 @@ poly2.formula <- y ~ poly(x,2)
   }
 
 
-# SECTION 1: PHASE DEFINITIONS
+# Phase definitions
 
 phase_rules <- list(
   LALA = list(acclim_end = "10-31", maint_end = "03-15"),
@@ -955,7 +910,6 @@ phase_rules <- list(
   CHCA = list(acclim_end = "10-31", maint_end = "03-15"),
   RHGR = list(acclim_end = "10-31", maint_end = "03-15")
 )
-
 
 # Function: assign phase for a given species, using its rules
 assign_phase <- function(date, species) {
@@ -1003,14 +957,14 @@ assign_phase_vec <- function(dates, species_vec) {
 }
 
 
-# SECTION 2: INTER-COLLECTION TEMPERATURE WINDOW
+# Inter-collection temeperature
 
 # --- 2a) Build collection interval table ---
 collections_tbl_ic <- collections_tbl %>%          # already exists from your earlier code
   arrange(Collection_Date) %>%
   mutate(Prev_Date = lag(Collection_Date))          # NA for the very first collection
 
-# Helper: compute inter-collection mean temp from a weather data frame
+# compute inter-collection mean temp from a weather data frame
 # weather_df must have columns: Treatment, Date, Tmean
 make_intercoll_temp <- function(weather_df) {
   weather_df %>%
@@ -1019,7 +973,7 @@ make_intercoll_temp <- function(weather_df) {
     mutate(Treatment = as.character(Treatment))
 }
 
-# --- 2b) Compute inter-collection mean per Treatment × Collection ---
+# Compute inter-collection mean per Treatment × Collection
 compute_ic_temp <- function(weather_df) {
   daily <- make_intercoll_temp(weather_df)
 
@@ -1051,7 +1005,7 @@ ic_temp_0m <- compute_ic_temp(wdat_0b)   # understory (0 m)
 
 
 
-# SECTION 3: BUILD DELTA LTE TABLES WITH INTER-COLLECTION TEMPERATURE
+# LTE with inter-collection temps
 
 build_delta_lte <- function(data, species_code, ic_temp_df, corrected_col) {
   # Step 1: one LTE mean per Season × Treatment × Date × Species
@@ -1065,7 +1019,7 @@ build_delta_lte <- function(data, species_code, ic_temp_df, corrected_col) {
       .groups = "drop"
     )
 
-  # Step 2: ΔLTE (difference from previous collection within Season × Treatment)
+  # ΔLTE (difference from previous collection within Season × Treatment)
   lte_delta <- lte_sum %>%
     group_by(Season, Treatment, Species) %>%
     # dplyr::arrange(Date, .by_group = TRUE) %>%
@@ -1074,28 +1028,28 @@ build_delta_lte <- function(data, species_code, ic_temp_df, corrected_col) {
     ungroup() %>%
     filter(!is.na(Delta_LTE))
 
-  # Step 3: join inter-collection temperature
-  # Match on Treatment and Collection (= Sequence in your data)
+  # join inter-collection temperature
+  # Match on Treatment and Collection (= Sequence in my data)
   lte_delta %>%
     left_join(
       ic_temp_df %>%
         dplyr::select(Treatment, Collection, Tmean_ic, n_days_ic, Window_days),
       by = c("Treatment", "Sequence" = "Collection")
     ) %>%
-    # Step 4: assign phase using unified rules
+    # assign phase using unified rules
     mutate(
       Process = assign_phase_vec(Date, Species),
       Process = factor(Process, levels = c("Acclimation", "Maintenance", "Deacclimation"))
     )
 }
 
-# --- Build for all four species ---
+#Build for all four species
 lala_delta <- build_delta_lte(initial.ch2,        "LALA", ic_temp_2m, "Corrected_T_2m")
 pima_delta  <- build_delta_lte(initial.ch2,        "PIMA", ic_temp_2m, "Corrected_T_2m")
 chca_delta  <- build_delta_lte(initial.ch_joined,  "CHCA", ic_temp_0m, "Corrected_T_0m")
 rhgr_delta  <- build_delta_lte(initial.ch_joined,  "RHGR", ic_temp_0m, "Corrected_T_0m")
 
-# --- Combine into overstory / understory / all ---
+#Combine into overstory / understory / all
 overstory_delta <- bind_rows(
   lala_delta %>% mutate(Classification = "Overstory"),
   pima_delta  %>% mutate(Classification = "Overstory")
@@ -1109,14 +1063,20 @@ understory_delta <- bind_rows(
 all_species_delta <- bind_rows(overstory_delta, understory_delta)
 
 
-# SECTION 4: ORIGINAL FIGURE STYLE (with regression lines, no equations)
+
+# phase_colors <- c(
+#   "Acclimation"    = "#A62800",
+#   "Maintenance"    = "#0969A2",
+#   "Deacclimation"  = "#7CAE00"
+# )
 
 phase_colors <- c(
-  "Acclimation"    = "#A62800",
-  "Maintenance"    = "#0969A2",
-  "Deacclimation"  = "#7CAE00"
+  "Acclimation"    = "#D4A96A",
+  "Maintenance"    = "#4A6670",
+  "Deacclimation"  = "#7AAB8A"
 )
 
+                  
 base_theme <- theme_bw(base_size = 6) +
   theme(
     legend.position   = "none",
@@ -1195,15 +1155,6 @@ fig_original_combined2
 
 
 
-# SECTION 5: QUALITATIVE FIGURE
-
-# # How many observations per phase × classification?
-# all_species_delta %>%
-#   filter(!is.na(Process)) %>%
-#   count(Classification, Process) %>%
-#   print()
-
-# Any collections with no temperature data (Tmean_ic = NA)?
 all_species_delta %>%
   filter(is.na(Tmean_ic)) %>%
   dplyr::select(Species, Season, Sequence, Treatment, Date) %>%
@@ -1211,9 +1162,9 @@ all_species_delta %>%
 
 
 phase_colors <- c(
-  "Acclimation"   = "#A62800",
-  "Maintenance"   = "#0969A2",
-  "Deacclimation" = "#7CAE00"
+  "Acclimation"    = "#D4A96A",
+  "Maintenance"    = "#4A6670",
+  "Deacclimation"  = "#7AAB8A"
 )
 
 base_theme <- theme_bw(base_size = 8) +
@@ -1265,6 +1216,19 @@ centroids <- all_species_delta %>%
   ) %>%
   mutate(Process = factor(Process,
                           levels = c("Acclimation", "Maintenance", "Deacclimation")))
+
+
+# centroids <- all_species_delta %>%
+#   filter(!is.na(Process), !is.na(Tmean_ic), !is.na(Delta_LTE)) %>%
+#   group_by(Classification, Process, Species) %>%
+#   summarise(
+#     x    = mean(Tmean_ic,  na.rm = TRUE),
+#     y    = mean(Delta_LTE, na.rm = TRUE),
+#     n    = n(),
+#     .groups = "drop"
+#   ) %>%
+#   mutate(Process = factor(Process,
+#                           levels = c("Acclimation", "Maintenance", "Deacclimation")))
 
 # Arrow segments: connect centroids in seasonal order
 # Acclimation -> Maintenance -> Deacclimation
@@ -1327,7 +1291,7 @@ fig_A2 <- ggplot(
 fig_A2
 
 
-# FIGURE 2 — Seasonal Trajectory Arrow Plot
+# Seasonal Trajectory Arrow Plot
 # Ellipses for context + arrows connecting phase centroids in seasonal order
 
 
@@ -1369,9 +1333,12 @@ fig_arrow <- ggplot(
                      guide = guide_axis(cap = "both")) + 
   
   facet_wrap(~ Classification) +
+  
+  # facet_wrap(~ Species, nrow=1) +
+  
   theme_bw(base_size = 6) +
   theme(
-    legend.position = "none",
+    legend.position = "top",
     strip.background = element_rect(color = "#CCCCCC"),
     # strip.text = element_blank(),
     panel.grid = element_blank(),
@@ -1389,15 +1356,14 @@ fig_arrow <- ggplot(
 fig_arrow
 
 
-# ggsave("Fig4_21.pdf", plot=fig_arrow, width=3.9, height=2.5, units ="in",
+# ggsave("Fig4_25.pdf", plot=fig_arrow, width=3.9, height=2.5, units ="in",
 # bg = "transparent", dpi = 300, path="~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures")
 
 
-
 process_colors <- c(
-  "Acclimation"   = "#A62800",
-  "Maintenance"   = "#0969A2",
-  "Deacclimation" = "#7CAE00"
+  "Acclimation"    = "#D4A96A",
+  "Maintenance"    = "#4A6670",
+  "Deacclimation"  = "#7AAB8A"
 )
 
 treatment_colors <- c(
@@ -1543,7 +1509,7 @@ fig_arrow_clean <- ggplot(
 fig_arrow_clean
 
 
-# ggsave("FigSDeltaLTE_v5.pdf", plot=fig_arrow_clean, width=3.9, height=2.5, units ="in",
+# ggsave("FigSDeltaLTE_v6.pdf", plot=fig_arrow_clean, width=3.9, height=2.5, units ="in",
 # bg = "transparent", dpi = 300, path="~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures")
 
 
@@ -1644,13 +1610,8 @@ seq_map <- tibble::tribble(
 
 )
 
-# dat_main_LALA  <- dat_LALA      %>% inner_join(seq_map, by = c("Season", "Sequence"))
-# dat_main2_LALA <- dat2_LALA     %>% inner_join(seq_map, by = c("Season", "Sequence"))
-# dat_mean_main2_LALA <- dat_mean2_LALA %>% inner_join(seq_map, by = c("Season", "Sequence"))
 
-
-#Removing data from plot 16, 6.75 collection CM:
-
+#Removing data from plot 8, 6.75 collection CH:
 # Define the exclusion condition
 exclude_condition <- function(df) {
   df %>%
@@ -1661,7 +1622,6 @@ exclude_condition <- function(df) {
 dat_main_LALA       <- dat_LALA      %>% inner_join(seq_map, by = c("Season", "Sequence")) %>% exclude_condition()
 dat_main2_LALA      <- dat2_LALA     %>% inner_join(seq_map, by = c("Season", "Sequence")) %>% exclude_condition()
 dat_mean_main2_LALA <- dat_mean2_LALA %>% inner_join(seq_map, by = c("Season", "Sequence"))
-
 
 
 ## LALA - Combined across years per season (Sequence2 panels)
@@ -1687,7 +1647,6 @@ dat_main2_LALA_plot <- dat_main2_LALA |>
 )
 
 
-
 All_Years_LALA_seq2 <- ggplot() +
   
   geom_beeswarm(
@@ -1710,20 +1669,24 @@ All_Years_LALA_seq2 <- ggplot() +
     fun = mean, geom = "point", size = 1
   ) +
 
-      geom_vline(xintercept = 0,lty=2,size=0.1)+
+      # geom_vline(xintercept = 0,lty=2,size=0.1)+
   
-    scale_x_continuous(breaks = c(-1.8, 0, 2.25, 4.5, 6.75, 9, 11.25),
-                     labels = c("", "0.0", "", "4.5", "", "9.0", ""),
+    scale_x_continuous(breaks = c(0, 2.25, 4.5, 6.75, 9, 11.25),
+                     labels = c("0.0", "", "4.5", "", "9.0", ""),
                      guide = guide_axis(cap = "both")) +
-  
+
   scale_y_continuous(breaks = seq(-35, -5, 10),
                      guide = guide_axis(cap = "both")) +
 
-  coord_cartesian(xlim = c(-2, 11), ylim = c(-40, -2)) +
+  coord_cartesian(xlim = c(-2.25, 11), ylim = c(-40, -2)) +
   
-  scale_color_manual(values = c("#A62800", "#0969A2", "#7CAE00")) +
-  scale_fill_manual(values = c("#A62800", "#0969A2", "#7CAE00")) +
+  # scale_color_manual(values = c("#A62800", "#0969A2", "#7CAE00")) +
+  # scale_fill_manual(values = c("#A62800", "#0969A2", "#7CAE00")) +
   
+  scale_color_manual(values = c("#D4A96A", "#4A6670", "#7AAB8A")) +
+  scale_fill_manual(values = c("#D4A96A", "#4A6670", "#7AAB8A")) +
+  
+
   facet_wrap(~ Sequence, ncol = 1, nrow = 4)+
 
   # Labels
@@ -1750,7 +1713,6 @@ All_Years_LALA_seq2 <- ggplot() +
   )
 
 All_Years_LALA_seq2
-
 
 
 All_Years_LALA_seq3 <- All_Years_LALA_seq2 +
@@ -1781,11 +1743,7 @@ All_Years_LALA_seq3 <- All_Years_LALA_seq2 +
 
 All_Years_LALA_seq3
 
-
-levels(as.factor(dat_main2_LALA$Corrected_T_2m))
-
-
-
+# levels(as.factor(dat_main2_LALA$Corrected_T_2m))
 
 
 f1_lala+All_Years_LALA_seq3
@@ -1802,6 +1760,7 @@ fig_1a
 
  
 # ggsave("Fig1a_v14.pdf", plot=fig_1a, width=3.5, height=4.0, units ="in", bg = "transparent", dpi = 300, path="~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures")
+
 
 #PIMA
 
@@ -1892,13 +1851,6 @@ seq_map <- tibble::tribble(
 
 )
 
-# dat_main_LALA  <- dat_LALA      %>% inner_join(seq_map, by = c("Season", "Sequence"))
-# dat_main2_LALA <- dat2_LALA     %>% inner_join(seq_map, by = c("Season", "Sequence"))
-# dat_mean_main2_LALA <- dat_mean2_LALA %>% inner_join(seq_map, by = c("Season", "Sequence"))
-
-
-#Removing data from plot 16, 6.75 collection CM:
-
 # Define the exclusion condition
 
 # Apply to all three datasets
@@ -1907,7 +1859,7 @@ dat_main2_PIMA      <- dat2_PIMA     %>% inner_join(seq_map, by = c("Season", "S
 dat_mean_main2_PIMA <- dat_mean2_PIMA %>% inner_join(seq_map, by = c("Season", "Sequence"))
 
 
-## LALA - Combined across years per season (Sequence2 panels)
+## PIMA - Combined across years per season (Sequence2 panels)
 
 ## set factor order once
 dat_main_PIMA$Sequence2  <- factor(dat_main_PIMA$Sequence2,  levels = c("Fall","Winter","Spring"))
@@ -1930,7 +1882,6 @@ dat_main2_PIMA_plot <- dat_main2_PIMA |>
 )
 
 
-
 All_Years_PIMA_seq2 <- ggplot() +
   
   geom_beeswarm(
@@ -1950,22 +1901,21 @@ All_Years_PIMA_seq2 <- ggplot() +
   
   stat_summary(
     data = dat_main_PIMA_plot, aes(x = Corrected_T_2m_plot, y = LTE, color = Sequence2, shape = CO2,fill = Sequence2),
-    fun = mean, geom = "point", size = 1
-  ) +
+    fun = mean, geom = "point", size = 1) +
 
-      geom_vline(xintercept = 0,lty=2,size=0.1)+
+      # geom_vline(xintercept = 0,lty=2,size=0.1)+
   
-    scale_x_continuous(breaks = c(-1.8, 0, 2.25, 4.5, 6.75, 9, 11.25),
-                     labels = c("", "0.0", "", "4.5", "", "9.0", ""),
+    scale_x_continuous(breaks = c(0, 2.25, 4.5, 6.75, 9, 11.25),
+                     labels = c("0.0", "", "4.5", "", "9.0", ""),
                      guide = guide_axis(cap = "both")) +
-  
+
   scale_y_continuous(breaks = seq(-35, -5, 10),
                      guide = guide_axis(cap = "both")) +
 
-  coord_cartesian(xlim = c(-2, 11), ylim = c(-40, -2)) +
+  coord_cartesian(xlim = c(-2.25, 11), ylim = c(-40, -2)) +
   
-  scale_color_manual(values = c("#A62800", "#0969A2", "#7CAE00")) +
-  scale_fill_manual(values = c("#A62800", "#0969A2", "#7CAE00")) +
+  scale_color_manual(values = c("#D4A96A", "#4A6670", "#7AAB8A")) +
+  scale_fill_manual(values = c("#D4A96A", "#4A6670", "#7AAB8A")) +
   
   facet_wrap(~ Sequence, ncol = 1, nrow = 4)+
 
@@ -1994,7 +1944,6 @@ All_Years_PIMA_seq2 <- ggplot() +
   )
 
 All_Years_PIMA_seq2
-
 
 
 All_Years_PIMA_seq3 <- All_Years_PIMA_seq2 +
@@ -2026,8 +1975,6 @@ All_Years_PIMA_seq3 <- All_Years_PIMA_seq2 +
 All_Years_PIMA_seq3
 
 
-
-
 f1_pima+All_Years_PIMA_seq3
 
 f1_pima +  All_Years_PIMA_seq3 + 
@@ -2039,9 +1986,9 @@ fig_1_PIMA <- ggdraw() +
   draw_plot(All_Years_PIMA_seq3, x = 0.61, y = 0, width = 0.36, height = 1)  # overlay (right)
 
 fig_1_PIMA
-
  
 # ggsave("Fig1a_v14.pdf", plot=fig_1a, width=3.5, height=4.0, units ="in", bg = "transparent", dpi = 300, path="~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures")
+
 
 #CHCA
  
@@ -2133,7 +2080,7 @@ dat_main_CHCA  <- dat_CHCA      %>% inner_join(seq_map, by = c("Season", "Sequen
 dat_main2_CHCA <- dat2_CHCA     %>% inner_join(seq_map, by = c("Season", "Sequence"))
 dat_mean_main2_CHCA <- dat_mean2_CHCA %>% inner_join(seq_map, by = c("Season", "Sequence"))
 
-## LALA - Combined across years per season (Sequence2 panels)
+## CHCA - Combined across years per season (Sequence2 panels)
 
 ## set factor order once
 dat_main_CHCA$Sequence2  <- factor(dat_main_CHCA$Sequence2,  levels = c("Fall","Winter","Spring"))
@@ -2171,28 +2118,27 @@ All_Years_CHCA_seq2 <- ggplot() +
   
     stat_summary(
     data = dat_main_CHCA_plot, aes(x = Corrected_T_0m_plot, y = LTE, shape = CO2),
-    fun = mean, geom = "point", size = 0.9, color="black"
+    fun = mean, geom = "point", size = 1.3, color="black"
   ) +
   
   stat_summary(
     data = dat_main_CHCA_plot, aes(x = Corrected_T_0m_plot, y = LTE, color = Sequence2, shape = CO2,fill = Sequence2),
-    fun = mean, geom = "point", size = 0.7
+    fun = mean, geom = "point", size = 1
   ) +
 
-      geom_vline(xintercept = 0,lty=2,size=0.1)+
+      # geom_vline(xintercept = 0,lty=2,size=0.1)+
   
-      scale_x_continuous(breaks = c(-1.8, 0, 2.25, 4.5, 6.75, 9, 11.25),
-                     labels = c("", "0.0", "", "4.5", "", "9.0", ""),
+    scale_x_continuous(breaks = c(0, 2.25, 4.5, 6.75, 9, 11.25),
+                     labels = c("0.0", "", "4.5", "", "9.0", ""),
                      guide = guide_axis(cap = "both")) +
-  
 
   scale_y_continuous(breaks = seq(-35, -5, 10),
                      guide = guide_axis(cap = "both")) +
 
-  coord_cartesian(xlim = c(-2, 11), ylim = c(-40, -2)) +
+  coord_cartesian(xlim = c(-2.25, 11), ylim = c(-40, -2)) +
   
-  scale_color_manual(values = c("#A62800", "#0969A2", "#7CAE00")) +
-  scale_fill_manual(values = c("#A62800", "#0969A2", "#7CAE00")) +
+  scale_color_manual(values = c("#D4A96A", "#4A6670", "#7AAB8A")) +
+  scale_fill_manual(values = c("#D4A96A", "#4A6670", "#7AAB8A")) +
   
   facet_wrap(~ Sequence, ncol = 1, nrow = 4)+
 
@@ -2221,8 +2167,6 @@ All_Years_CHCA_seq2 <- ggplot() +
   )
 
 All_Years_CHCA_seq2
-
-
 
 All_Years_CHCA_seq3 <- All_Years_CHCA_seq2 +
   stat_poly_eq(
@@ -2268,7 +2212,6 @@ All_Years_CHCA_seq3 <- All_Years_CHCA_seq2 +
   )
 
 All_Years_CHCA_seq3
-
 
 
 fig_1b <- ggdraw() +
@@ -2409,28 +2352,25 @@ All_Years_RHGR_seq2 <- ggplot() +
   
     stat_summary(
     data = dat_main_RHGR_plot, aes(x = Corrected_T_0m_plot, y = LTE, shape = CO2),
-    fun = mean, geom = "point", size = 0.9, color="black"
+    fun = mean, geom = "point", size = 1.3, color="black"
   ) +
   
   stat_summary(
     data = dat_main_RHGR_plot, aes(x = Corrected_T_0m_plot, y = LTE, color = Sequence2, shape = CO2,fill = Sequence2),
-    fun = mean, geom = "point", size = 0.7
+    fun = mean, geom = "point", size = 1
   ) +
 
-      geom_vline(xintercept = 0,lty=2,size=0.1)+
-  
-      scale_x_continuous(breaks = c(-1.8, 0, 2.25, 4.5, 6.75, 9, 11.25),
-                     labels = c("", "0.0", "", "4.5", "", "9.0", ""),
+    scale_x_continuous(breaks = c(0, 2.25, 4.5, 6.75, 9, 11.25),
+                     labels = c("0.0", "", "4.5", "", "9.0", ""),
                      guide = guide_axis(cap = "both")) +
-  
 
   scale_y_continuous(breaks = seq(-35, -5, 10),
                      guide = guide_axis(cap = "both")) +
 
-  coord_cartesian(xlim = c(-2, 11), ylim = c(-40, -2)) +
+  coord_cartesian(xlim = c(-2.25, 11), ylim = c(-40, -2)) +
   
-  scale_color_manual(values = c("#A62800", "#0969A2", "#7CAE00")) +
-  scale_fill_manual(values = c("#A62800", "#0969A2", "#7CAE00")) +
+  scale_color_manual(values = c("#D4A96A", "#4A6670", "#7AAB8A")) +
+  scale_fill_manual(values = c("#D4A96A", "#4A6670", "#7AAB8A")) +
   
   facet_wrap(~ Sequence, ncol = 1, nrow = 4)+
 
@@ -2507,8 +2447,6 @@ All_Years_RHGR_seq3 <- All_Years_RHGR_seq2 +
 
 All_Years_RHGR_seq3
 
-
-
 fig_1b_RHGR <- ggdraw() +
   draw_plot(f1_rhgr, x = 0, y = 0, width = 0.65, height = 1) +          # base plot (left)
   draw_plot(All_Years_RHGR_seq3, x = 0.61, y = 0, width = 0.36, height = 1)  # overlay (right)
@@ -2517,8 +2455,6 @@ fig_1b_RHGR
 
 
 # ggsave("Fig1b_v6.pdf", plot=fig_1b, width=3.5, height=4, units ="in", bg = "transparent", dpi = 300, path="~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures")
-
-
 
 
 f1_lala
@@ -2537,12 +2473,6 @@ f1_lala|f1_pima|f1_chca|f1_rhgr
 # ggsave("NEW_Fig1_RHGR_v5.pdf", plot=f1_rhgr, width=2.00, height=3.7, units ="in", bg = "transparent", dpi = 300, path="~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures")
 
 
-
-
-
-
-
-
 All_Years_LALA_seq3
 All_Years_PIMA_seq3
 All_Years_CHCA_seq3
@@ -2552,13 +2482,13 @@ All_Years_RHGR_seq3
 All_Years_LALA_seq3|All_Years_PIMA_seq3|All_Years_CHCA_seq3|All_Years_RHGR_seq3
 
 
-# ggsave("NEW_Fig3_LALA_v6.pdf", plot=All_Years_LALA_seq3, width=1.5, height=4, units ="in", bg = "transparent", dpi = 300, path="~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures")
-
-# ggsave("NEW_Fig3_CHCA_v4.pdf", plot=All_Years_CHCA_seq3, width=1.5, height=4, units ="in", bg = "transparent", dpi = 300, path="~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures")
-
-# ggsave("NEW_Fig3_PIMA_v1.pdf", plot=All_Years_PIMA_seq3, width=1.5, height=4, units ="in", bg = "transparent", dpi = 300, path="~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures")
-
-# ggsave("NEW_Fig3_RHGR_v1.pdf", plot=All_Years_RHGR_seq3, width=1.5, height=4, units ="in", bg = "transparent", dpi = 300, path="~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures")
+# ggsave("NEW_Fig3_LALA_v10.pdf", plot=All_Years_LALA_seq3, width=1.5, height=4, units ="in", bg = "transparent", dpi = 300, path="~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures")
+# 
+# ggsave("NEW_Fig3_CHCA_v8.pdf", plot=All_Years_CHCA_seq3, width=1.5, height=4, units ="in", bg = "transparent", dpi = 300, path="~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures")
+# 
+# ggsave("NEW_Fig3_PIMA_v4.pdf", plot=All_Years_PIMA_seq3, width=1.5, height=4, units ="in", bg = "transparent", dpi = 300, path="~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures")
+# 
+# ggsave("NEW_Fig3_RHGR_v4.pdf", plot=All_Years_RHGR_seq3, width=1.5, height=4, units ="in", bg = "transparent", dpi = 300, path="~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures")
 
 
 
@@ -2568,7 +2498,7 @@ All_Years_LALA_seq3|All_Years_PIMA_seq3|All_Years_CHCA_seq3|All_Years_RHGR_seq3
 
 ```{r Figure 4}
 
-# 1. Season / sequence lookup tables
+# Season / sequence lookup tables
 season_map <- tibble::tribble(
   ~Season_letter, ~Season_num,
   "A", 2022,
@@ -2577,8 +2507,6 @@ season_map <- tibble::tribble(
   "D", 2025
 )
 
-# NOTE: seq_map is only used for the All_Years scatter plots (Figures 3/4),
-# NOT for the slope figures — slopes use all collections across the full year
 seq_map <- tibble::tribble(
   ~Season, ~Sequence, ~Sequence2,
   "A", "AA", "Fall",   "A", "AD", "Winter",   "A", "AH", "Spring",
@@ -2587,7 +2515,7 @@ seq_map <- tibble::tribble(
   "D", "DD", "Fall",   "D", "DH", "Winter",   "D", "DO", "Spring"
 )
 
-# 2. Build corrected-temperature columns and attach to initial.ch 
+# Build corrected-temperature columns and attach to initial.ch 
 temps_all <- Mean_all_collections %>%
   inner_join(season_map, by = c("Season" = "Season_num")) %>%
   rename(Season_chr = Season_letter) %>%
@@ -2654,8 +2582,7 @@ initial.ch_joined <- initial_keys %>%
   ) %>%
   dplyr::select(-ends_with("_plot0m"), -ends_with("_trt0m"))
 
-# 3. Species datasets — filter Treatment but DO NOT inner_join seq_map 
-# (seq_map inner_join would drop most collections, leaving very few slope points)
+# Species datasets — filter Treatment (Amb=-2.25)
 
 # LALA / PIMA — 2m temperature, all collections across the year
 dat2 <- initial.ch_joined %>%
@@ -2669,7 +2596,7 @@ dat_un2 <- initial.ch_joined %>%
   mutate(Temperature = as.numeric(as.character(Treatment))) %>%
   filter(Temperature != -2.25)
 
-# 4. Compute slopes per Sequence × Date × Season × Species 
+# Compute slopes per Sequence × Date × Season × Species 
 
 slopes_by_sequence_LALA_PIMA <- dat2 %>%
   group_by(Sequence, Date, Season, Species) %>%
@@ -2707,12 +2634,14 @@ slopes_by_sequence_CHCA_RHGR <- dat_un2 %>%
     )
   )
 
-# 5. Shared aesthetics
+# Shared aesthetics
 shape_vals <- c("A" = 22, "B" = 23, "C" = 24, "D" = 25)
+
+
 color_vals <- c(
-  "Acclimation"   = "#A62800",
-  "Deacclimation" = "#7CAE00",
-  "Maintenance"   = "#0969A2"
+  "Acclimation"    = "#D4A96A",
+  "Maintenance"    = "#4A6670",
+  "Deacclimation"  = "#7AAB8A"
 )
 
 # x-axis: Jul(1) → May(~325), matching Jday_shifted where Jul 1 = 1
@@ -2739,18 +2668,12 @@ base_theme <- theme_bw(base_size = 6) +
     panel.spacing     = unit(0, "lines")
   )
 
-# 6. Slope figures 
+# Slope figures 
 
 fig_slopes_by_sequence_LALA_PIMA <- ggplot(slopes_by_sequence_LALA_PIMA,
                                             aes(Jday_shifted, slope)) +
   
   annotate("rect", xmin = -Inf, xmax = Inf, ymin = 1,    ymax = 2,  fill = "#b2182b", alpha = 0.1) +  # damage
-  # annotate("rect", xmin = -Inf, xmax = Inf, ymin = 0,    ymax = 1,    fill = "#fddbc7", alpha = 0.1) +  # less risk
-  # annotate("rect", xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = 0,    fill = "#1a9850", alpha = 0.15) +  # no risk
-
-  # annotate("rect", xmin = -Inf, xmax = Inf, ymin = 1,    ymax = 2,  fill = "#b2182b", alpha = 0.1) +  # damage
-  # annotate("rect", xmin = -Inf, xmax = Inf, ymin = 0,    ymax = 1,    fill = "#1a9850", alpha = 0.15) +  # less risk
-  # annotate("rect", xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = 0,    fill = "white", alpha = 0.15) +  # no risk
   
   geom_line(aes(group = Season), color = "gray60", linewidth = 0.2) +
   geom_point(aes(shape = Season), size = 1, color = "black") +
@@ -2791,10 +2714,8 @@ fig_slopes_by_sequence_LALA_PIMA
 fig_slopes_by_sequence_CHCA_RHGR <- ggplot(slopes_by_sequence_CHCA_RHGR,
                                             aes(Jday_shifted, slope)) +
   
-  annotate("rect", xmin = -Inf, xmax = Inf, ymin = 1,    ymax = 4.1,  fill = "#b2182b", alpha = 0.1) +  # damage
-  # annotate("rect", xmin = -Inf, xmax = Inf, ymin = 0,    ymax = 1,    fill = "#fddbc7", alpha = 0.1) +  # less risk
-  # annotate("rect", xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = 0,    fill = "#1a9850", alpha = 0.15) +  # no risk
- 
+    annotate("rect", xmin = -Inf, xmax = Inf, ymin = 1,    ymax = 4.1,  fill = "#b2182b", alpha = 0.1) +  # damage
+
   
   geom_line(aes(group = Season), color = "gray60", linewidth = 0.2) +
   geom_point(aes(shape = Season), size = 1, color = "black") +
@@ -2839,15 +2760,14 @@ fig_slopes_combined <- fig_slopes_by_sequence_LALA_PIMA |  fig_slopes_by_sequenc
 fig_slopes_combined
 
 
-# ggsave("Fig4_v25_span1.pdf", plot=fig_slopes_combined, width=4.4, height=2.4, units ="in", bg = "transparent", dpi = 300, path="~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures")
+# ggsave("Fig4_v29_span1.pdf", plot=fig_slopes_combined, width=4.4, height=2.4, units ="in", bg = "transparent", dpi = 300, path="~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures")
 
 
 ```
 
 ```{r Fig 4 using Inter-Collection Mean Temperature }
 
-
-# 1. Join Tmean_ic onto dat2 and dat_un2 (already have Sequence + Treatment)
+# Join Tmean_ic onto dat2 and dat_un2 (already have Sequence + Treatment)
 dat2_ic <- dat2 %>%
   left_join(ic_temp_2m %>% mutate(Treatment = as.character(Treatment)),
             by = c("Sequence" = "Collection", "Treatment"))
@@ -2856,7 +2776,7 @@ dat_un2_ic <- dat_un2 %>%
   left_join(ic_temp_0m %>% mutate(Treatment = as.character(Treatment)),
             by = c("Sequence" = "Collection", "Treatment"))
 
-# 2. Compute slopes using Tmean_ic as x (same structure as before)
+# Compute slopes using Tmean_ic as x (same structure as before)
 slopes_ic_LALA_PIMA <- dat2_ic %>%
   group_by(Sequence, Date, Season, Species) %>%
   summarise(
@@ -2899,7 +2819,7 @@ slopes_ic_CHCA_RHGR <- slopes_ic_CHCA_RHGR %>%
   filter(Sequence != "AF")
 
 
-# 3. Figures — reuse all the same aesthetics as fig_slopes_combined
+# Figures — reuse all the same aesthetics as fig_slopes_combined
 fig_slopes_ic_LALA_PIMA <- ggplot(slopes_ic_LALA_PIMA, aes(Jday_shifted, slope)) +
   geom_line(aes(group = Season), color = "gray60", linewidth = 0.2) +
   geom_point(aes(shape = Season), size = 1, color = "black") +
@@ -2937,10 +2857,7 @@ fig_slopes_ic_LALA_PIMA <- ggplot(slopes_ic_LALA_PIMA,
                                             aes(Jday_shifted, slope)) +
   
   annotate("rect", xmin = -Inf, xmax = Inf, ymin = 1,    ymax = 2.0,  fill = "#b2182b", alpha = 0.1) +  # damage
-  # annotate("rect", xmin = -Inf, xmax = Inf, ymin = 0,    ymax = 1,    fill = "#fddbc7", alpha = 0.1) +  # less risk
-  # annotate("rect", xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = 0,    fill = "#1a9850", alpha = 0.15) +  # no risk
  
-  
   geom_line(aes(group = Season), color = "gray60", linewidth = 0.2) +
   geom_point(aes(shape = Season), size = 1, color = "black") +
   geom_point(aes(color = Season2, fill = Season2, shape = Season), size = 0.8) +
@@ -2979,11 +2896,8 @@ fig_slopes_ic_LALA_PIMA
 fig_slopes_ic_CHCA_RHGR <- ggplot(slopes_ic_CHCA_RHGR,
                                             aes(Jday_shifted, slope)) +
   
-  annotate("rect", xmin = -Inf, xmax = Inf, ymin = 1,    ymax = 6.2,  fill = "#b2182b", alpha = 0.1) +  # damage
-  # annotate("rect", xmin = -Inf, xmax = Inf, ymin = 0,    ymax = 1,    fill = "#fddbc7", alpha = 0.1) +  # less risk
-  # annotate("rect", xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = 0,    fill = "#1a9850", alpha = 0.15) +  # no risk
- 
-  
+  annotate("rect", xmin = -Inf, xmax = Inf, ymin = 1,    ymax = 6.3,  fill = "#b2182b", alpha = 0.1) +  # damage
+
   geom_line(aes(group = Season), color = "gray60", linewidth = 0.2) +
   geom_point(aes(shape = Season), size = 1, color = "black") +
   geom_point(aes(color = Season2, fill = Season2, shape = Season), size = 0.8) +
@@ -2993,7 +2907,7 @@ fig_slopes_ic_CHCA_RHGR <- ggplot(slopes_ic_CHCA_RHGR,
   geom_hline(yintercept = 1, linetype = 2, linewidth = 0.1) +
   x_axis_months +
   
-    scale_y_continuous(limits = c(-4, 6.2),
+    scale_y_continuous(limits = c(-4, 6.3),
                      breaks = c(-4.0, -2.0, -1.0, 0.0, 1.0, 2, 4.0, 6.0),
                      labels = c("-4.0", "-2.0", "-1.0", "0.0", "1.0", "2.0", "4.0", "6.0"),
                      guide = guide_axis(cap = "both")) +
@@ -3026,10 +2940,7 @@ fig_slopes_ic_combined <- fig_slopes_ic_LALA_PIMA | fig_slopes_ic_CHCA_RHGR
 fig_slopes_ic_combined
 
 
-# ggsave("fig_slopes_ic_combined_v5.pdf", plot=fig_slopes_ic_combined, width=4.4, height=2.4, units ="in", bg = "transparent", dpi = 300, path="~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures")
-
-
-
+# ggsave("fig_slopes_ic_combined_v8.pdf", plot=fig_slopes_ic_combined, width=4.4, height=2.4, units ="in", bg = "transparent", dpi = 300, path="~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures")
 
 ```
 
@@ -3095,7 +3006,6 @@ winter_2m_fig
 
 # ggsave("winter_2m_fig_v6.pdf", plot=winter_2m_fig   , width=2.3, height=3, units ="in", bg = "transparent", dpi = 600, path="~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures")
 
-
 # Mean winter temperature at 0m
 
 winter_0m <- wdat_0b %>% filter(Month %in% c(12, 1, 2))
@@ -3126,8 +3036,6 @@ winter_0m_fig <- ggplot(winter_0m, aes(x = Temp, y = as.factor(Treatment), fill 
   scale_x_continuous(limits=c(-21,11), breaks=c(-20,-10,0,10),
                    guide = guide_axis(theme = NULL, minor.ticks = T, cap = "both"))+
 
-
-  
   labs(
     title = "",
     x = "Distribution of Winter Temperatures (°C) \nat surface level",
@@ -3173,7 +3081,6 @@ f1_lala <- ggplot()+
   
   geom_hline(yintercept=0, size=0.2, lty=3)+
 
-  
     geom_smooth(aes(x = Date, y = LTE,  color = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "A"), Species %in% "LALA"), size=0.3, method = "loess", stat = "summary", se=F) +
       geom_point(aes(x = Date, y = LTE, group = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "A"), Species %in% "LALA"), stat="summary", size=0.7, shape=21, color="black")+
       geom_point(aes(x = Date, y = LTE, color = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "A"), Species %in% "LALA"), stat="summary", size=0.5)+
@@ -3203,7 +3110,6 @@ f1_lala <- ggplot()+
   scale_y_continuous(limits = c(-40, 50), breaks = c(-40, -35, -30, -25, -20, -15, -10, -5, 0, 5, 10, 15, 20, 25, 30,35,40, 45, 50),
                      labels = c(-40,"",-30, "", -20, "", -10, "", 0, "", 10, "", 20, "", 30,"", 45,"", 50), expand = c(0, 0), guide=guide_axis_truncated()) + 
   
-  
  theme_bw(base_size = 6) +
   theme(legend.position = "none",
     legend.key.size = unit(1, 'lines'),
@@ -3228,37 +3134,27 @@ f1_pima <- ggplot()+
 
         geom_ribbon(aes(x = as.Date(Date), ymax = Tmax, ymin = Tmin), data = subset(subset(wdat_2b, Treatment %in% "9")), lty = 1, lwd = 0.05, alpha = 0.2, color = "#990000", fill = "#990000") +
 
-
-
             geom_line(aes(x = as.Date(Date), y = Temp), data = subset(subset(wdat_2b, Treatment %in% "-2.25")), size=0.3, alpha=0.8, color = "#333366", stat="summary") +
   
           geom_line(aes(x = as.Date(Date), y = Temp), data = subset(subset(wdat_2b, Treatment %in% "9")), size=0.3, alpha=0.8, color = "#990000", stat="summary") +
-  
 
     geom_hline(yintercept=0, size=0.2, lty=3)+
-
   
     geom_smooth(aes(x = Date, y = LTE,  color = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "A"), Species %in% "PIMA"), size=0.3, method = "loess", stat = "summary", se=F) +
       geom_point(aes(x = Date, y = LTE, group = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "A"), Species %in% "PIMA"), stat="summary", size=0.7, shape=21, color="black")+
       geom_point(aes(x = Date, y = LTE, color = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "A"), Species %in% "PIMA"), stat="summary", size=0.5)+
   
-  
   geom_smooth(aes(x = Date, y = LTE,  color = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "B"), Species %in% "PIMA"), size=0.3, method = "loess", stat = "summary", se=F) +
       geom_point(aes(x = Date, y = LTE, group = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "B"), Species %in% "PIMA"), stat="summary", size=0.7, shape=21, color="black")+
       geom_point(aes(x = Date, y = LTE, color = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "B"), Species %in% "PIMA"), stat="summary", size=0.5)+
-  
-  
   
    geom_smooth(aes(x = Date, y = LTE,  color = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "C"), Species %in% "PIMA"), size=0.3, method = "loess", stat = "summary", se=F) +
       geom_point(aes(x = Date, y = LTE, group = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "C"), Species %in% "PIMA"), stat="summary", size=0.7, shape=21, color="black")+
       geom_point(aes(x = Date, y = LTE, color = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "C"), Species %in% "PIMA"), stat="summary", size=0.5)+
   
-  
   geom_smooth(aes(x = Date, y = LTE,  color = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "D"), Species %in% "PIMA"), size=0.3, method = "loess", stat = "summary", se=F) +
       geom_point(aes(x = Date, y = LTE, group = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "D"), Species %in% "PIMA"), stat="summary", size=0.7, shape=21, color="black")+
       geom_point(aes(x = Date, y = LTE, color = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "D"), Species %in% "PIMA"), stat="summary", size=0.5)+
-  
-  
   
   scale_color_manual(values=c("#333366", "#009999", "#99CC33", "#FFCC00", "#CC3366", "#990000"))+
   scale_fill_manual(values=c("#333366", "#009999", "#99CC33", "#FFCC00", "#CC3366", "#990000"))+
@@ -3268,8 +3164,6 @@ f1_pima <- ggplot()+
   scale_x_date(date_labels = "%b", date_breaks = "2 month", ,guide=guide_axis_truncated())+
   scale_y_continuous(limits = c(-40, 50), breaks = c(-40, -35, -30, -25, -20, -15, -10, -5, 0, 5, 10, 15, 20, 25, 30,35,40, 45, 50),
                      labels = c(-40,"",-30, "", -20, "", -10, "", 0, "", 10, "", 20, "", 30,"", 45,"", 50), expand = c(0, 0), guide=guide_axis_truncated()) +  # facet_wrap(.~Treatment)+
-  
-  
   
  theme_bw(base_size = 6) +
   theme(legend.position = "none",
@@ -3285,8 +3179,8 @@ f1_pima <- ggplot()+
     axis.text.x = element_text(color = c("black"), angle = 45, vjust = 0.5, hjust = 0.5))+
     coord_cartesian(xlim = c(as.Date("2021-08-15"), as.Date("2025-05-30")), ylim = c(-40, 50), expand = TRUE, default = FALSE, clip = "on")
 
-
 f1_pima
+
 
 f1_chca <- ggplot()+
  
@@ -3300,26 +3194,21 @@ f1_chca <- ggplot()+
   
   geom_hline(yintercept=0, size=0.2, lty=3)+
 
-  
     geom_smooth(aes(x = Date, y = LTE,  color = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "A"), Species %in% "CHCA"), size=0.3, method = "loess", stat = "summary", se=F) +
       geom_point(aes(x = Date, y = LTE, group = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "A"), Species %in% "CHCA"), stat="summary", size=0.7, shape=21, color="black")+
       geom_point(aes(x = Date, y = LTE, color = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "A"), Species %in% "CHCA"), stat="summary", size=0.5)+
-  
   
   geom_smooth(aes(x = Date, y = LTE,  color = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "B"), Species %in% "CHCA"), size=0.3, method = "loess", stat = "summary", se=F) +
       geom_point(aes(x = Date, y = LTE, group = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "B"), Species %in% "CHCA"), stat="summary", size=0.7, shape=21, color="black")+
       geom_point(aes(x = Date, y = LTE, color = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "B"), Species %in% "CHCA"), stat="summary", size=0.5)+
   
-  
    geom_smooth(aes(x = Date, y = LTE,  color = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "C"), Species %in% "CHCA"), size=0.3, method = "loess", stat = "summary", se=F) +
       geom_point(aes(x = Date, y = LTE, group = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "C"), Species %in% "CHCA"), stat="summary", size=0.7, shape=21, color="black")+
       geom_point(aes(x = Date, y = LTE, color = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "C"), Species %in% "CHCA"), stat="summary", size=0.5)+
   
-  
   geom_smooth(aes(x = Date, y = LTE,  color = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "D"), Species %in% "CHCA"), size=0.3, method = "loess", stat = "summary", se=F) +
       geom_point(aes(x = Date, y = LTE, group = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "D"), Species %in% "CHCA"), stat="summary", size=0.7, shape=21, color="black")+
       geom_point(aes(x = Date, y = LTE, color = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "D"), Species %in% "CHCA"), stat="summary", size=0.5)+
-  
   
   scale_color_manual(values=c("#333366", "#009999", "#99CC33", "#FFCC00", "#CC3366", "#990000"))+
   scale_fill_manual(values=c("#333366", "#009999", "#99CC33", "#FFCC00", "#CC3366", "#990000"))+
@@ -3329,7 +3218,6 @@ f1_chca <- ggplot()+
   scale_x_date(date_labels = "%b", date_breaks = "2 month", ,guide=guide_axis_truncated())+
   scale_y_continuous(limits = c(-40, 50), breaks = c(-40, -35, -30, -25, -20, -15, -10, -5, 0, 5, 10, 15, 20, 25, 30,35,40, 45, 50),
                      labels = c(-40,"",-30, "", -20, "", -10, "", 0, "", 10, "", 20, "", 30,"", 45,"", 50), expand = c(0, 0), guide=guide_axis_truncated()) + 
-  
   
  theme_bw(base_size = 6) +
   theme(legend.position = "none",
@@ -3360,27 +3248,22 @@ f1_rhgr <- ggplot()+
         geom_line(aes(x = as.Date(Date), y = Temp), data = subset(subset(wdat_0b, Treatment %in% "9")), size=0.3, alpha=0.8, color = "#990000", stat="summary") +
   
   geom_hline(yintercept=0, size=0.2, lty=3)+
-
   
     geom_smooth(aes(x = Date, y = LTE,  color = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "A"), Species %in% "RHGR"), size=0.3, method = "loess", stat = "summary", se=F) +
       geom_point(aes(x = Date, y = LTE, group = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "A"), Species %in% "RHGR"), stat="summary", size=0.7, shape=21, color="black")+
       geom_point(aes(x = Date, y = LTE, color = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "A"), Species %in% "RHGR"), stat="summary", size=0.5)+
   
-  
   geom_smooth(aes(x = Date, y = LTE,  color = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "B"), Species %in% "RHGR"), size=0.3, method = "loess", stat = "summary", se=F) +
       geom_point(aes(x = Date, y = LTE, group = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "B"), Species %in% "RHGR"), stat="summary", size=0.7, shape=21, color="black")+
       geom_point(aes(x = Date, y = LTE, color = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "B"), Species %in% "RHGR"), stat="summary", size=0.5)+
-  
   
    geom_smooth(aes(x = Date, y = LTE,  color = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "C"), Species %in% "RHGR"), size=0.3, method = "loess", stat = "summary", se=F) +
       geom_point(aes(x = Date, y = LTE, group = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "C"), Species %in% "RHGR"), stat="summary", size=0.7, shape=21, color="black")+
       geom_point(aes(x = Date, y = LTE, color = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "C"), Species %in% "RHGR"), stat="summary", size=0.5)+
   
-  
   geom_smooth(aes(x = Date, y = LTE,  color = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "D"), Species %in% "RHGR"), size=0.3, method = "loess", stat = "summary", se=F) +
       geom_point(aes(x = Date, y = LTE, group = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "D"), Species %in% "RHGR"), stat="summary", size=0.7, shape=21, color="black")+
       geom_point(aes(x = Date, y = LTE, color = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "D"), Species %in% "RHGR"), stat="summary", size=0.5)+
-  
   
   scale_color_manual(values=c("#333366", "#009999", "#99CC33", "#FFCC00", "#CC3366", "#990000"))+
   scale_fill_manual(values=c("#333366", "#009999", "#99CC33", "#FFCC00", "#CC3366", "#990000"))+
@@ -3390,7 +3273,6 @@ f1_rhgr <- ggplot()+
   scale_x_date(date_labels = "%b", date_breaks = "2 month", ,guide=guide_axis_truncated())+
   scale_y_continuous(limits = c(-40, 50), breaks = c(-40, -35, -30, -25, -20, -15, -10, -5, 0, 5, 10, 15, 20, 25, 30,35,40, 45, 50),
                      labels = c(-40,"",-30, "", -20, "", -10, "", 0, "", 10, "", 20, "", 30,"", 45,"", 50), expand = c(0, 0), guide=guide_axis_truncated()) + 
-  
   
  theme_bw(base_size = 6) +
   theme(legend.position = "none",
@@ -3418,8 +3300,6 @@ combined_plot <- f1_lala/f1_pima/f1_chca/f1_rhgr+plot_layout(heights=c(1, 1, 1, 
 # Save the plot
 # ggsave("Fig1_ICH_all_species_v5.pdf", plot = combined_plot, width = 6.0, height = 7, units = "in", dpi = 300, path="~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures")
 
-
-
 ```
 
 
@@ -3432,7 +3312,6 @@ seq_map <- tibble::tribble(
 
 )
 
-
 trt_colors <- c(
   "-2.25" = "#333366",
   "0"     = "#009999",
@@ -3442,7 +3321,6 @@ trt_colors <- c(
   "9"     = "#990000"
 )
 trt_levels <- c("-2.25", "0", "2.25", "4.5", "6.75", "9")
-
 
 
 # DATA PREP — PIMA (2m) and RHGR (0m)
@@ -3505,7 +3383,6 @@ dat_combined2 <- bind_rows(
                            levels = c("Fall", "Winter", "Spring")),
     Treatment     = factor(as.character(Treatment), levels = trt_levels)
   )
-
 
 
 # FIGURE — coloured by Sequence2 (phase)
@@ -3704,7 +3581,6 @@ fig_PIMA_RHGR_trt <- ggplot() +
 
 fig_PIMA_RHGR_trt
 
-
 ```
 
 ```{r Supp Figure 5 All Species Season C subset}
@@ -3716,7 +3592,6 @@ seq_map <- tibble::tribble(
 
 )
 
-
 trt_colors <- c(
   "-2.25" = "#333366",
   "0"     = "#009999",
@@ -3726,7 +3601,6 @@ trt_colors <- c(
   "9"     = "#990000"
 )
 trt_levels <- c("-2.25", "0", "2.25", "4.5", "6.75", "9")
-
 
 
 # DATA PREP — PIMA (2m) and RHGR (0m)
@@ -3800,7 +3674,6 @@ dat_combined2 <- bind_rows(
   )
 
 
-
 # FIGURE — coloured by Sequence2 (phase)
 # Rows = Sequence (collection), Columns = Species
 
@@ -3864,11 +3737,6 @@ fig_all_species_phase <- ggplot() +
     guide  = guide_axis(cap = "both")
   ) +
   coord_cartesian(xlim = c(-2, 12), ylim = c(-40, 0)) +
-
-  # scale_color_manual(values = c("#A62800", "#0969A2", "#7CAE00"),
-  #                    name   = "Phase") +
-  # scale_fill_manual(values  = c("#A62800", "#0969A2", "#7CAE00"),
-  #                   name    = "Phase") +
 
   # Rows = collection (proxy for phase), Columns = species
   facet_grid(Sequence ~ Species_label, axes="all") +
@@ -3997,7 +3865,6 @@ fig_PIMA_RHGR_trt <- ggplot() +
 
 fig_PIMA_RHGR_trt
 
-
 ```
 
 ```{r Supp Figure 6. Distribution of December temperatures at 2m}
@@ -4005,7 +3872,6 @@ fig_PIMA_RHGR_trt
 winter_2m_v2 <- wdat_2b %>% filter(Month %in% c(12))
 
 winter_2m_v2 <- winter_2m_v2 %>% filter(Season %in% c(2022, 2023, 2024, 2025))
-
 
 # Mean winter temperature per plot and treatment
 mean_winter_2m_v2 <- winter_2m_v2 %>%
@@ -4063,6 +3929,9 @@ scale_color_manual(values=c("#333366", "#009999", "#99CC33", "#FFCC00", "#CC3366
 winter_2m_v2_fig
 
 
+# ggsave("winter_2m_v2_fig_v10.pdf", plot=winter_2m_v2_fig   , width=2.5, height=3, units ="in", bg = "transparent", dpi = 600, path="~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures")
+
+
 # How many days were the treatments experiencing temperatures above 0C?
 
 days_above_0_2024 <- wdat_2b %>%
@@ -4077,8 +3946,6 @@ days_above_0_2024 <- wdat_2b %>%
   )
 
 days_above_0_2024
-
-
 
 ```
 
@@ -4239,15 +4106,7 @@ panel_seasons <- dat_filt %>%
   distinct(Season, Date) %>%
   mutate(Season = factor(Season, levels = c("A","B","C","D")))
 
-# season_col_map <- c("A" = "#C8B8A2", "B" = "#A2B8C8", "C" = "#B8C8A2", "D" = "#C8A2B8")
-
-# season_col_map <- c("A" = "#B5A99A", "B" = "#9AABB5", "C" = "#A9B59A", "D" = "#B59AAB")
-
-# season_col_map <- c("A" = "#C9C0B5", "B" = "#B5BEC9", "C" = "#8A8A8A", "D" = "#5A5A5A")
-
 season_col_map <- c("A" = "#B5A99A", "B" = "#9AABB5", "C" = "#A9B59A", "D" = "#5A5A5A")
-
-
 
 strip_fills_x <- lapply(as.character(panel_seasons$Season), function(s)
   element_rect(fill = season_col_map[s], color = NA))
@@ -4322,23 +4181,6 @@ p_season_LALA <- ggplot() +
 p_season_LALA
 
 
-# Year_LALA <- p_season_LALA +
-#   stat_poly_eq(
-#     data  = dat2_filt,
-#     aes(x = Corrected_T_2m, y = LTE, group = Sequence,
-#         label = after_stat(tolower(p.value.label)) ),
-#     label.x = 0.25, label.y = 0.8, size = 2, formula = my.formula
-#   ) +
-#   stat_regline_equation(
-#     data = dat2_filt,
-#     aes(x = Corrected_T_2m, y = LTE, group = Sequence),
-#     size = 2.5, label.x = 0.80, label.y = 0
-#   )
-# 
-# Year_LALA
-
-
-
 Year_LALA <- p_season_LALA +
   stat_poly_eq(
     data = dat2_filt, aes(x = Corrected_T_2m, y = LTE, group = Sequence,
@@ -4355,8 +4197,6 @@ Year_LALA
 # ggsave("Year_LALA_all_seasons_v24.pdf", plot = Year_LALA, width = 8, height = 9.0, units = "in", dpi = 300, path="~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures")
 
 
-
-
 ## PIMA
 panel_seasons <- dat_filt %>%
   arrange(Season, Date) %>%
@@ -4364,8 +4204,6 @@ panel_seasons <- dat_filt %>%
   mutate(Season = factor(Season, levels = c("A","B","C","D")))
 
 season_col_map <- c("A" = "#B5A99A", "B" = "#9AABB5", "C" = "#A9B59A", "D" = "#5A5A5A")
-
-
 
 strip_fills_x <- lapply(as.character(panel_seasons$Season), function(s)
   element_rect(fill = season_col_map[s], color = NA))
@@ -4477,135 +4315,6 @@ Year_PIMA
 
 # ggsave("Year_PIMA_all_seasons_v11.pdf", plot = Year_PIMA, width = 8, height = 9.0, units = "in", dpi = 300, path="~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures")
 
-
-### Figure using 3 data points per season/year
-
-# All_Years_LALA <- ggplot() +
-#   geom_smooth(
-#     data = dat_mean_main2 %>% filter(Species == "LALA"), 
-#     aes(x = Corrected_T, y = LT50, group = 1),
-#     col = "black", size = 0.4, method = "lm", formula = my.formula
-#   ) +
-#   geom_beeswarm(
-#     data = dat_main %>% filter(Species == "LALA"), 
-#     aes(x = Corrected_T, y = LTE, col = Treatment),
-#     stroke = 0.1, size = 0.6, cex = 1.1, priority = "density", alpha = 0.6
-#   ) +
-#   stat_summary(
-#     data = dat_main %>% filter(Species == "LALA"), 
-#     aes(x = Corrected_T, y = LTE),
-#     fun = mean, geom = "point", size = 1.1, color = "black", shape = 1
-#   ) +
-#   stat_summary(
-#     data = dat_main %>% filter(Species == "LALA"), 
-#     aes(x = Corrected_T, y = LTE, col = Treatment),
-#     fun = mean, geom = "point", size = 0.9, shape = 19
-#   ) +
-#   
-#   stat_poly_eq(data = dat_mean_main2 %>% filter(Species == "LALA"),
-#              aes(x = Corrected_T, y = LT50, group=Sequence,
-#                  label = after_stat(tolower(p.value.label))),
-#              label.x = 0.3, 
-#              label.y= 0.7,
-#              size = 1.5,
-#              formula = my.formula)+
-#   
-#   stat_regline_equation(data = dat_mean_main2 %>% filter(Species == "LALA"),
-#                       aes(x = Corrected_T, y = LT50, group=Sequence),
-#                       label.x = 0, 
-#                       label.y= -5,
-#                       size = 2)+
-# 
-# 
-#   facet_wrap(~ Sequence, ncol = 3) +
-#   axes_scales +
-#   theme_bw(base_size = 6) +
-#   theme(
-#     legend.position  = "none",
-#     strip.background = element_rect(color = "#CCCCCC"),
-#     # strip.text       = element_blank(),
-#     panel.grid       = element_blank(),
-#     panel.border     = element_blank(),
-#     axis.line.x      = element_line(size = 0.25, color = "black"),
-#     axis.line.y      = element_line(size = 0.25, color = "black"),
-#     axis.text        = element_text(size = 6),
-#     axis.text.x      = element_text(angle = 45, vjust = 0.5, hjust = 0.5),
-#     axis.ticks       = element_line(size = 0.25, color = "black"),
-#     axis.ticks.length = unit(0.3, "lines")
-#   ) +
-#   coord_cartesian(xlim = c(-3, 10), ylim = c(-40, -2))
-# 
-# 
-# All_Years_LALA
-# 
-# 
-# All_Years_PIMA <- ggplot() +
-#   geom_smooth(
-#     data = dat_mean_main2 %>% filter(Species == "PIMA"), 
-#     aes(x = Corrected_T, y = LT50, group = 1),
-#     col = "black", size = 0.4, method = "lm", formula = my.formula
-#   ) +
-#   geom_beeswarm(
-#     data = dat_main %>% filter(Species == "PIMA"), 
-#     aes(x = Corrected_T, y = LTE, col = Treatment),
-#     stroke = 0.1, size = 0.6, cex = 1.1, priority = "density", alpha = 0.6
-#   ) +
-#   stat_summary(
-#     data = dat_main %>% filter(Species == "PIMA"), 
-#     aes(x = Corrected_T, y = LTE),
-#     fun = mean, geom = "point", size = 1.1, color = "black", shape = 1
-#   ) +
-#   stat_summary(
-#     data = dat_main %>% filter(Species == "PIMA"), 
-#     aes(x = Corrected_T, y = LTE, col = Treatment),
-#     fun = mean, geom = "point", size = 0.9, shape = 19
-#   ) +
-#   
-#   stat_poly_eq(data = dat_mean_main2 %>% filter(Species == "PIMA"),
-#              aes(x = Corrected_T, y = LT50, group=Sequence,
-#                  label = after_stat(tolower(p.value.label))),
-#              label.x = 0.3, 
-#              label.y= 0.7,
-#              size = 1.5,
-#              formula = my.formula)+
-#   
-#   stat_regline_equation(data = dat_mean_main2 %>% filter(Species == "PIMA"),
-#                       aes(x = Corrected_T, y = LT50, group=Sequence),
-#                       label.x = 0, 
-#                       label.y= -5,
-#                       size = 2)+
-# 
-# 
-#   facet_wrap(~ Sequence, ncol = 3) +
-#   axes_scales +
-#   theme_bw(base_size = 6) +
-#   theme(
-#     legend.position  = "none",
-#     strip.background = element_rect(color = "#CCCCCC"),
-#     # strip.text       = element_blank(),
-#     panel.grid       = element_blank(),
-#     panel.border     = element_blank(),
-#     axis.line.x      = element_line(size = 0.25, color = "black"),
-#     axis.line.y      = element_line(size = 0.25, color = "black"),
-#     axis.text        = element_text(size = 6),
-#     axis.text.x      = element_text(angle = 45, vjust = 0.5, hjust = 0.5),
-#     axis.ticks       = element_line(size = 0.25, color = "black"),
-#     axis.ticks.length = unit(0.3, "lines")
-#   ) +
-#   coord_cartesian(xlim = c(-3, 10), ylim = c(-40, -2))
-# 
-# 
-# All_Years_PIMA
-# 
-# 
-# All_Years_LALA+All_Years_PIMA
-
-
-# ggsave("All_Years_LALA+All_Years_PIMA_v2.pdf", plot = All_Years_LALA+All_Years_PIMA, width = 8.0, height = 6.0, units = "in", dpi = 200, path="~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures")
-
-
-
-
 ```
 
 ```{r Supp Figure 10 and 11 ICH by collection CHCA & RHGR}
@@ -4698,8 +4407,6 @@ keep_seq <- dat_un %>%
 dat_filt      <- dat_un       %>% filter(Season %in% season_pick, Species == "CHCA", Sequence %in% keep_seq)
 dat_mean2_filt<- dat_un_mean2 %>% filter(Season %in% season_pick, Species == "CHCA", Sequence %in% keep_seq)
 dat2_filt     <- dat_un      %>% filter(Season %in% season_pick, Species == "CHCA", Sequence %in% keep_seq)
-
-
 
 dat_filt  <- dat_filt  %>%
   mutate(Corrected_T_0m = ifelse(Treatment == -2.25, -1.8, Corrected_T_0))
@@ -4925,8 +4632,7 @@ Year_RHGR
 
 ```{r Stats and Table S1}
 
-
-# helper to format p-values
+#format p-values
 fmt_p <- function(p) {
   if (is.na(p))  return("–")
   if (p < 0.001) return("<0.001")
@@ -5386,10 +5092,7 @@ theme(
 
 ct_fr_fig
 
-
 # ggsave("ct_fr_fig_v2.pdf", plot=ct_fr_fig   , width=1.2, height=4.2, units ="in", bg = "transparent", dpi = 600, path="~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures")
-
-
 
 ```
 
