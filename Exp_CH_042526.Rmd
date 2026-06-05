@@ -1337,7 +1337,7 @@ fig_arrow <- ggplot(
   
   theme_bw(base_size = 6) +
   theme(
-    legend.position = "top",
+    legend.position = "none",
     strip.background = element_rect(color = "#CCCCCC"),
     # strip.text = element_blank(),
     panel.grid = element_blank(),
@@ -1355,7 +1355,7 @@ fig_arrow <- ggplot(
 fig_arrow
 
 
-# ggsave("Fig4_25.pdf", plot=fig_arrow, width=3.9, height=2.5, units ="in",
+# ggsave("Fig4_27.pdf", plot=fig_arrow, width=3.9, height=2.5, units ="in",
 # bg = "transparent", dpi = 300, path="~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures")
 
 
@@ -1508,7 +1508,7 @@ fig_arrow_clean <- ggplot(
 fig_arrow_clean
 
 
-# ggsave("FigSDeltaLTE_v6.pdf", plot=fig_arrow_clean, width=3.9, height=2.5, units ="in",
+# ggsave("FigSDeltaLTE_v7.pdf", plot=fig_arrow_clean, width=3.9, height=2.5, units ="in",
 # bg = "transparent", dpi = 300, path="~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures")
 
 
@@ -2760,7 +2760,7 @@ fig_slopes_combined <- fig_slopes_by_sequence_LALA_PIMA |  fig_slopes_by_sequenc
 fig_slopes_combined
 
 
-# ggsave("Fig4_v29_span1.pdf", plot=fig_slopes_combined, width=4.4, height=2.4, units ="in", bg = "transparent", dpi = 300, path="~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures")
+# ggsave("Fig4_v30_span1.pdf", plot=fig_slopes_combined, width=4.4, height=2.4, units ="in", bg = "transparent", dpi = 300, path="~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures")
 
 
 ```
@@ -2811,7 +2811,7 @@ slopes_ic_CHCA_RHGR <- dat_un2_ic %>%
     Season2 = case_when(
   month(Date) %in% 8:10                      ~ "Acclimation",
   month(Date) %in% c(11, 12, 1, 2)           ~ "Maintenance",
-  month(Date) %in% 3:6                      ~ "Deacclimation",,
+  month(Date) %in% 3:6                      ~ "Deacclimation",
   TRUE                                        ~ NA_character_
 )
   )
@@ -2942,7 +2942,7 @@ fig_slopes_ic_combined <- fig_slopes_ic_LALA_PIMA | fig_slopes_ic_CHCA_RHGR
 fig_slopes_ic_combined
 
 
-# ggsave("fig_slopes_ic_combined_v8.pdf", plot=fig_slopes_ic_combined, width=4.4, height=2.4, units ="in", bg = "transparent", dpi = 300, path="~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures")
+# ggsave("fig_slopes_ic_combined_v9.pdf", plot=fig_slopes_ic_combined, width=4.4, height=2.4, units ="in", bg = "transparent", dpi = 300, path="~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures")
 
 ```
 
