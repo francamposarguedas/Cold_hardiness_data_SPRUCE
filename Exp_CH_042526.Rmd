@@ -905,10 +905,10 @@ poly2.formula <- y ~ poly(x,2)
 # Phase definitions
 
 phase_rules <- list(
-  LALA = list(acclim_end = "10-31", maint_end = "03-15"),
-  PIMA = list(acclim_end = "10-31", maint_end = "03-15"),
-  CHCA = list(acclim_end = "10-31", maint_end = "03-15"),
-  RHGR = list(acclim_end = "10-31", maint_end = "03-15")
+  LALA = list(acclim_end = "10-31", maint_end = "02-29"),
+  PIMA = list(acclim_end = "10-31", maint_end = "02-29"),
+  CHCA = list(acclim_end = "10-31", maint_end = "02-29"),
+  RHGR = list(acclim_end = "10-31", maint_end = "02-29")
 )
 
 # Function: assign phase for a given species, using its rules
@@ -1152,7 +1152,6 @@ fig_original_combined2 <- fig_original_combined +
   )
 
 fig_original_combined2
-
 
 
 all_species_delta %>%
@@ -2608,13 +2607,14 @@ slopes_by_sequence_LALA_PIMA <- dat2 %>%
   filter(n_x_vals >= 4) %>%
   mutate(
     Jday_shifted = ((yday(Date) - 182) %% 365) + 1,
-    Season2 = case_when(
-      month(Date) %in% c(12, 1, 2) ~ "Maintenance",
-      month(Date) %in% 3:5         ~ "Deacclimation",
-      month(Date) %in% 6:11        ~ "Acclimation",
-      TRUE                         ~ NA_character_
-    )
-  )
+  
+Season2 = case_when(
+  month(Date) %in% 8:10                      ~ "Acclimation",
+  month(Date) %in% c(11, 12, 1, 2)           ~ "Maintenance",
+  month(Date) %in% 3:6                      ~ "Deacclimation",
+  TRUE                                        ~ NA_character_
+)
+)
 
 slopes_by_sequence_CHCA_RHGR <- dat_un2 %>%
   group_by(Sequence, Date, Season, Species) %>%
@@ -2626,12 +2626,12 @@ slopes_by_sequence_CHCA_RHGR <- dat_un2 %>%
   filter(n_x_vals >= 4) %>%
   mutate(
     Jday_shifted = ((yday(Date) - 182) %% 365) + 1,
-    Season2 = case_when(
-      month(Date) %in% c(12, 1, 2) ~ "Maintenance",
-      month(Date) %in% 3:5         ~ "Deacclimation",
-      month(Date) %in% 6:11        ~ "Acclimation",
-      TRUE                         ~ NA_character_
-    )
+Season2 = case_when(
+  month(Date) %in% 8:10                      ~ "Acclimation",
+  month(Date) %in% c(11, 12, 1, 2)           ~ "Maintenance",
+  month(Date) %in% 3:6                      ~ "Deacclimation",
+  TRUE                                        ~ NA_character_
+)
   )
 
 # Shared aesthetics
@@ -2777,6 +2777,7 @@ dat_un2_ic <- dat_un2 %>%
             by = c("Sequence" = "Collection", "Treatment"))
 
 # Compute slopes using Tmean_ic as x (same structure as before)
+
 slopes_ic_LALA_PIMA <- dat2_ic %>%
   group_by(Sequence, Date, Season, Species) %>%
   summarise(
@@ -2789,11 +2790,11 @@ slopes_ic_LALA_PIMA <- dat2_ic %>%
   mutate(
     Jday_shifted = ((yday(Date) - 182) %% 365) + 1,
     Season2 = case_when(
-      month(Date) %in% c(12, 1, 2) ~ "Maintenance",
-      month(Date) %in% 3:5         ~ "Deacclimation",
-      month(Date) %in% 6:11        ~ "Acclimation",
-      TRUE                         ~ NA_character_
-    )
+  month(Date) %in% 8:10                      ~ "Acclimation",
+  month(Date) %in% c(11, 12, 1, 2)           ~ "Maintenance",
+  month(Date) %in% 3:6                      ~ "Deacclimation",
+  TRUE                                        ~ NA_character_
+)
   )
 
 slopes_ic_CHCA_RHGR <- dat_un2_ic %>%
@@ -2808,12 +2809,13 @@ slopes_ic_CHCA_RHGR <- dat_un2_ic %>%
   mutate(
     Jday_shifted = ((yday(Date) - 182) %% 365) + 1,
     Season2 = case_when(
-      month(Date) %in% c(12, 1, 2) ~ "Maintenance",
-      month(Date) %in% 3:5         ~ "Deacclimation",
-      month(Date) %in% 6:11        ~ "Acclimation",
-      TRUE                         ~ NA_character_
-    )
+  month(Date) %in% 8:10                      ~ "Acclimation",
+  month(Date) %in% c(11, 12, 1, 2)           ~ "Maintenance",
+  month(Date) %in% 3:6                      ~ "Deacclimation",,
+  TRUE                                        ~ NA_character_
+)
   )
+
 
 slopes_ic_CHCA_RHGR <- slopes_ic_CHCA_RHGR %>%
   filter(Sequence != "AF")
