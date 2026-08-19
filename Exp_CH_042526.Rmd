@@ -1355,8 +1355,8 @@ fig_arrow <- ggplot(
 fig_arrow
 
 
-# ggsave("Fig4_27.pdf", plot=fig_arrow, width=3.9, height=2.5, units ="in",
-# bg = "transparent", dpi = 300, path="~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures")
+# ggsave("Fig4_29.png", plot=fig_arrow, width=3.6, height=2.5, units ="in",
+# bg = "transparent", dpi = 600, path="~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures")
 
 
 process_colors <- c(
@@ -2463,6 +2463,7 @@ f1_rhgr
 
 f1_lala|f1_pima|f1_chca|f1_rhgr
 
+
 # ggsave("NEW_Fig1_LALA_v13.pdf", plot=f1_lala, width=2.00, height=3.7, units ="in", bg = "transparent", dpi = 300, path="~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures")
 
 # ggsave("NEW_Fig1_PIMA_v5.pdf", plot=f1_pima, width=1.90, height=3.7, units ="in", bg = "transparent", dpi = 300, path="~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures")
@@ -2481,13 +2482,22 @@ All_Years_RHGR_seq3
 All_Years_LALA_seq3|All_Years_PIMA_seq3|All_Years_CHCA_seq3|All_Years_RHGR_seq3
 
 
-# ggsave("NEW_Fig3_LALA_v10.pdf", plot=All_Years_LALA_seq3, width=1.5, height=4, units ="in", bg = "transparent", dpi = 300, path="~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures")
+# ggsave("NEW_Fig3_LALA_v11.png", plot=All_Years_LALA_seq3, width=1.5, height=4, units ="in", bg = "transparent", dpi = 600, path="~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures")
 # 
-# ggsave("NEW_Fig3_CHCA_v8.pdf", plot=All_Years_CHCA_seq3, width=1.5, height=4, units ="in", bg = "transparent", dpi = 300, path="~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures")
+# ggsave("NEW_Fig3_CHCA_v9.png", plot=All_Years_CHCA_seq3, width=1.5, height=4, units ="in", bg = "transparent", dpi = 600, path="~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures")
 # 
-# ggsave("NEW_Fig3_PIMA_v4.pdf", plot=All_Years_PIMA_seq3, width=1.5, height=4, units ="in", bg = "transparent", dpi = 300, path="~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures")
+# ggsave("NEW_Fig3_PIMA_v5.png", plot=All_Years_PIMA_seq3, width=1.5, height=4, units ="in", bg = "transparent", dpi = 600, path="~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures")
 # 
-# ggsave("NEW_Fig3_RHGR_v4.pdf", plot=All_Years_RHGR_seq3, width=1.5, height=4, units ="in", bg = "transparent", dpi = 300, path="~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures")
+# ggsave("NEW_Fig3_RHGR_v4.png", plot=All_Years_RHGR_seq3, width=1.5, height=4, units ="in", bg = "transparent", dpi = 600, path="~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures")
+
+
+All_species_phases <- All_Years_LALA_seq3 + plot_spacer() + All_Years_PIMA_seq3 + plot_spacer() + All_Years_CHCA_seq3 + plot_spacer() + All_Years_RHGR_seq3 +
+  plot_layout(widths = c(4, -0.7, 4, -0.7, 4, -0.7, 4), guides = "collect")
+
+All_species_phases
+
+
+# ggsave("NEW_All_species_phases_v3.png", plot=All_species_phases, width=6.50, height=5.0, units ="in", bg = "transparent", dpi = 1200, path="~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures")
 
 
 
@@ -2760,7 +2770,208 @@ fig_slopes_combined <- fig_slopes_by_sequence_LALA_PIMA |  fig_slopes_by_sequenc
 fig_slopes_combined
 
 
-# ggsave("Fig4_v30_span1.pdf", plot=fig_slopes_combined, width=4.4, height=2.4, units ="in", bg = "transparent", dpi = 300, path="~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures")
+# ggsave("Fig4_v32_span1.png", plot=fig_slopes_combined, width=5, height=2.4, units ="in", bg = "transparent", dpi = 600, path="~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures")
+
+# ggsave("fig_slopes_by_sequence_LALA_PIMA_span1.png", plot=fig_slopes_by_sequence_LALA_PIMA, width=3.4, height=2.4, units ="in", bg = "transparent", dpi = 600, path="~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures")
+
+# ggsave("fig_slopes_by_sequence_CHCA_RHGR_span1.png", plot=fig_slopes_by_sequence_CHCA_RHGR, width=3.4, height=2.4, units ="in", bg = "transparent", dpi = 600, path="~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures")
+
+
+
+
+library(dplyr)
+library(emmeans)
+library(nlme)
+library(multcomp)
+library(multcompView)
+
+dat2_mod <- dat2 %>%
+  filter(!is.na(Corrected_T_2m), !is.na(LTE)) %>%
+  mutate(Collection = factor(Date),
+         Species    = factor(Species))
+
+d_lala <- dat2_mod %>% filter(Species == "LALA") %>% droplevels()
+
+str(d_lala)
+
+m_lala <- lme(LTE ~ Corrected_T_2m * Collection,
+              random = ~ 1 | Plot,
+              data = d_lala, method = "REML")
+
+anova(m_lala)
+
+m.lst <- lstrends(m_lala, "Collection", var = "Corrected_T_2m")
+m.lst
+pairs(m.lst)
+
+tab <- as.data.frame(pairs(m.lst))
+tab
+
+# contrast(m.lst, method = "consec", adjust = "BH")
+contrast(m.lst, adjust = "Tukey")
+
+model_means_cld_lala <- cld(object = m.lst,
+                       adjust = "Tukey",
+                       Letters = letters,
+                       alpha = 0.05)
+
+
+library(dplyr)
+library(emmeans)
+library(multcomp)
+
+## ---- OVERSTORY (2 m) ----
+
+dat2_mod <- dat2 %>%
+  filter(!is.na(Corrected_T_2m), !is.na(LTE)) %>%
+  mutate(Collection = factor(Date),
+         Species    = factor(Species))
+
+### LALA
+d_lala <- dat2_mod %>%
+  filter(Species == "LALA") %>%
+  group_by(Collection) %>%
+  filter(n_distinct(Treatment) >= 4) %>%   # same rule as the figure
+  ungroup() %>%
+  droplevels()
+
+seasons_lala <- sort(unique(d_lala$Season))
+anova_out_lala <- list(); slopes_out_lala <- list()
+pairs_out_lala <- list(); cld_out_lala   <- list()
+
+for (s in seasons_lala) {
+  d_s <- d_lala %>% filter(Season == s) %>% droplevels()
+  m_s_lala <- lm(LTE ~ Corrected_T_2m * Collection, data = d_s)   # <- lm, no random
+  anova_out_lala[[s]]  <- anova(m_s_lala)
+  m.lst_lala <- emtrends(m_s_lala, "Collection", var = "Corrected_T_2m")
+  slopes_out_lala[[s]] <- as.data.frame(summary(m.lst_lala, infer = TRUE))
+  pairs_out_lala[[s]]  <- as.data.frame(pairs(m.lst_lala, adjust = "tukey"))
+  cld_out_lala[[s]]    <- cld(m.lst_lala, adjust = "Tukey",
+                              Letters = letters, alpha = 0.05, decreasing = TRUE)
+}
+
+table_cld_lala <- bind_rows(
+  lapply(names(cld_out_lala), function(s)
+    as.data.frame(cld_out_lala[[s]]) %>% mutate(Season = s, .before = 1))
+) %>%
+  mutate(.group = trimws(.group), Species = "LALA", .before = 1) %>%
+  rename(slope = Corrected_T_2m.trend, group = .group)
+
+
+### PIMA
+d_pima <- dat2_mod %>%
+  filter(Species == "PIMA") %>%
+  group_by(Collection) %>%
+  filter(n_distinct(Treatment) >= 4) %>%
+  ungroup() %>%
+  droplevels()
+
+seasons_pima <- sort(unique(d_pima$Season))
+anova_out_pima <- list(); slopes_out_pima <- list()
+pairs_out_pima <- list(); cld_out_pima   <- list()
+
+for (s in seasons_pima) {
+  d_s <- d_pima %>% filter(Season == s) %>% droplevels()
+  m_s_pima <- lm(LTE ~ Corrected_T_2m * Collection, data = d_s)
+  anova_out_pima[[s]]  <- anova(m_s_pima)
+  m.lst_pima <- emtrends(m_s_pima, "Collection", var = "Corrected_T_2m")
+  slopes_out_pima[[s]] <- as.data.frame(summary(m.lst_pima, infer = TRUE))
+  pairs_out_pima[[s]]  <- as.data.frame(pairs(m.lst_pima, adjust = "tukey"))
+  cld_out_pima[[s]]    <- cld(m.lst_pima, adjust = "Tukey",
+                              Letters = letters, alpha = 0.05, decreasing = TRUE)
+}
+
+table_cld_pima <- bind_rows(
+  lapply(names(cld_out_pima), function(s)
+    as.data.frame(cld_out_pima[[s]]) %>% mutate(Season = s, .before = 1))
+) %>%
+  mutate(.group = trimws(.group), Species = "PIMA", .before = 1) %>%
+  rename(slope = Corrected_T_2m.trend, group = .group)
+
+table_cld_overstory <- bind_rows(table_cld_lala, table_cld_pima) %>%
+  relocate(Species, Season) %>% arrange(Species, Season, Collection)
+
+
+## ---- UNDERSTORY (0 m) ----
+
+dat0_mod <- dat_un2 %>%
+  filter(!is.na(Corrected_T_0m), !is.na(LTE)) %>%
+  mutate(Collection = factor(Date),
+         Species    = factor(Species))
+
+### CHCA
+d_chca <- dat0_mod %>%
+  filter(Species == "CHCA") %>%
+  group_by(Collection) %>%
+  filter(n_distinct(Treatment) >= 4) %>%
+  ungroup() %>%
+  droplevels()
+
+seasons_chca <- sort(unique(d_chca$Season))
+anova_out_chca <- list(); slopes_out_chca <- list()
+pairs_out_chca <- list(); cld_out_chca   <- list()
+
+for (s in seasons_chca) {
+  d_s <- d_chca %>% filter(Season == s) %>% droplevels()
+  m_s_chca <- lm(LTE ~ Corrected_T_0m * Collection, data = d_s)   # 0m column
+  anova_out_chca[[s]]  <- anova(m_s_chca)
+  m.lst_chca <- emtrends(m_s_chca, "Collection", var = "Corrected_T_0m")
+  slopes_out_chca[[s]] <- as.data.frame(summary(m.lst_chca, infer = TRUE))
+  pairs_out_chca[[s]]  <- as.data.frame(pairs(m.lst_chca, adjust = "tukey"))
+  cld_out_chca[[s]]    <- cld(m.lst_chca, adjust = "Tukey",
+                              Letters = letters, alpha = 0.05, decreasing = TRUE)
+}
+
+table_cld_chca <- bind_rows(
+  lapply(names(cld_out_chca), function(s)
+    as.data.frame(cld_out_chca[[s]]) %>% mutate(Season = s, .before = 1))
+) %>%
+  mutate(.group = trimws(.group), Species = "CHCA", .before = 1) %>%
+  rename(slope = Corrected_T_0m.trend, group = .group)
+
+### RHGR
+d_rhgr <- dat0_mod %>%
+  filter(Species == "RHGR") %>%
+  group_by(Collection) %>%
+  filter(n_distinct(Treatment) >= 4) %>%
+  ungroup() %>%
+  droplevels()
+
+seasons_rhgr <- sort(unique(d_rhgr$Season))
+anova_out_rhgr <- list(); slopes_out_rhgr <- list()
+pairs_out_rhgr <- list(); cld_out_rhgr   <- list()
+
+for (s in seasons_rhgr) {
+  d_s <- d_rhgr %>% filter(Season == s) %>% droplevels()
+  m_s_rhgr <- lm(LTE ~ Corrected_T_0m * Collection, data = d_s)
+  anova_out_rhgr[[s]]  <- anova(m_s_rhgr)
+  m.lst_rhgr <- emtrends(m_s_rhgr, "Collection", var = "Corrected_T_0m")
+  slopes_out_rhgr[[s]] <- as.data.frame(summary(m.lst_rhgr, infer = TRUE))
+  pairs_out_rhgr[[s]]  <- as.data.frame(pairs(m.lst_rhgr, adjust = "tukey"))
+  cld_out_rhgr[[s]]    <- cld(m.lst_rhgr, adjust = "Tukey",
+                              Letters = letters, alpha = 0.05, decreasing = TRUE)
+}
+
+table_cld_rhgr <- bind_rows(
+  lapply(names(cld_out_rhgr), function(s)
+    as.data.frame(cld_out_rhgr[[s]]) %>% mutate(Season = s, .before = 1))
+) %>%
+  mutate(.group = trimws(.group), Species = "RHGR", .before = 1) %>%
+  rename(slope = Corrected_T_0m.trend, group = .group)
+
+table_cld_understory <- bind_rows(table_cld_chca, table_cld_rhgr) %>%
+  relocate(Species, Season) %>% arrange(Species, Season, Collection)
+
+table_cld_all <- bind_rows(table_cld_overstory, table_cld_understory)
+
+
+# write.csv(
+#   table_cld_all,
+#   file = "~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures/LTE_temperature_sensitivity_collection_v2.csv",
+#   row.names = FALSE
+# )
+# 
+
 
 
 ```

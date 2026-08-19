@@ -1,0 +1,598 @@
+---
+title: "Untitled"
+author: "Francisco Campos Arguedas"
+date: "2026-07-30"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r}
+
+f1_lala <- ggplot()+
+ 
+      geom_ribbon(aes(x = as.Date(Date), ymax = Tmax, ymin = Tmin), data = subset(subset(wdat_2b, Treatment %in% "-2.25")), lty = 1, lwd = 0.05, alpha = 0.2, color = "#333366", fill = "#333366") +
+
+        geom_ribbon(aes(x = as.Date(Date), ymax = Tmax, ymin = Tmin), data = subset(subset(wdat_2b, Treatment %in% "9")), lty = 1, lwd = 0.05, alpha = 0.2, color = "#990000", fill = "#990000") +
+
+        geom_line(aes(x = as.Date(Date), y = Temp), data = subset(subset(wdat_2b, Treatment %in% "-2.25")), size=0.3, alpha=0.8, color = "#333366", stat="summary") +
+  
+        geom_line(aes(x = as.Date(Date), y = Temp), data = subset(subset(wdat_2b, Treatment %in% "9")), size=0.3, alpha=0.8, color = "#990000", stat="summary") +
+  
+  geom_hline(yintercept=0, size=0.2, lty=3)+
+
+  
+   geom_smooth(aes(x = Date, y = LTE,  color = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "C"), Species %in% "LALA"), size=0.6, method = "loess", stat = "summary", se=F) +
+
+      geom_point(aes(x = Date, y = LTE, group = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "C"), Species %in% "LALA"), stat="summary", size=1.3, shape=21, color="black")+
+      geom_point(aes(x = Date, y = LTE, color = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "C"), Species %in% "LALA"), stat="summary", size=1)+
+  
+  
+  scale_color_manual(values=c("#333366", "#009999", "#99CC33", "#FFCC00", "#CC3366", "#990000"))+
+  scale_fill_manual(values=c("#333366", "#009999", "#99CC33", "#FFCC00", "#CC3366", "#990000"))+
+  # ylab("Temperature (°C)")+
+  ylab("")+
+  xlab("Month") +
+  
+  # scale_x_date(date_labels = "%b", date_breaks = "1 month", minor_breaks = "1 month", guide = guide_axis(cap = "both"))+
+  
+  scale_x_date(breaks = as.Date(c("2023-09-01", "2023-10-01", "2023-11-01",
+                                   "2023-12-01","2024-01-01", "2024-02-01", 
+                                   "2024-03-01","2024-04-01", "2024-05-01")),
+  labels = c("Sep", "", "Nov", "", "Jan", "", "Mar", "", "May"),
+  guide  = guide_axis(cap = "both"))+
+
+ scale_y_continuous(
+  limits = c(-45, 50),
+  breaks = c(-45, -40, -35, -30, -25, -20, -15, -10, -5, 0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50),
+  labels = c("", -40, "", -30, "", -20, "", -10, "", 0, "", 10, "", 20, "", 30, "", 40, "", 50),
+  expand = c(0, 0),
+  sec.axis = sec_axis(
+    ~ . * 1,
+    breaks = c(-45, -40, -35, -30, -25, -20, -15, -10, -5, 0),
+    labels = c("", "", "", "", "", "", "", "", "", ""),
+    name = ""
+  ),
+  guide = guide_axis(cap = "both")
+)+
+  
+  
+ theme_bw(base_size = 6) +
+  theme(legend.position = "none",
+    legend.key.size = unit(1, 'lines'),
+    strip.background = element_rect(color = "#CCCCCC"),
+    panel.grid = element_blank(),
+    panel.border = element_blank(),
+    axis.line.x = element_line(size = 0.20, color = "black"),
+    axis.line.y = element_line(size = 0.20, color = "black"),
+    axis.text = element_text(size = 6),
+    axis.ticks = element_line(size = 0.20, color = "black"),
+    axis.ticks.length = unit(0.15, 'lines'),        
+    axis.text.x = element_text(color = c("black"), angle = 0, vjust = 0.5, hjust = 0.5))+
+    coord_cartesian(xlim = c(as.Date("2023-08-25"), as.Date("2024-05-09")), ylim = c(-40, 45), expand = TRUE, default = FALSE, clip = "on")
+
+
+f1_lala
+
+
+
+
+f1_pima <- ggplot()+
+ 
+      geom_ribbon(aes(x = as.Date(Date), ymax = Tmax, ymin = Tmin), data = subset(subset(wdat_2b, Treatment %in% "-2.25")), lty = 1, lwd = 0.05, alpha = 0.2, color = "#333366", fill = "#333366") +
+
+        geom_ribbon(aes(x = as.Date(Date), ymax = Tmax, ymin = Tmin), data = subset(subset(wdat_2b, Treatment %in% "9")), lty = 1, lwd = 0.05, alpha = 0.2, color = "#990000", fill = "#990000") +
+
+        geom_line(aes(x = as.Date(Date), y = Temp), data = subset(subset(wdat_2b, Treatment %in% "-2.25")), size=0.3, alpha=0.8, color = "#333366", stat="summary") +
+  
+        geom_line(aes(x = as.Date(Date), y = Temp), data = subset(subset(wdat_2b, Treatment %in% "9")), size=0.3, alpha=0.8, color = "#990000", stat="summary") +
+  
+  geom_hline(yintercept=0, size=0.2, lty=3)+
+
+  
+   geom_smooth(aes(x = Date, y = LTE,  color = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "C"), Species %in% "PIMA"), size=0.6, method = "loess", stat = "summary", se=F) +
+
+      geom_point(aes(x = Date, y = LTE, group = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "C"), Species %in% "PIMA"), stat="summary", size=1.3, shape=21, color="black")+
+      geom_point(aes(x = Date, y = LTE, color = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "C"), Species %in% "PIMA"), stat="summary", size=1)+
+  
+  
+  scale_color_manual(values=c("#333366", "#009999", "#99CC33", "#FFCC00", "#CC3366", "#990000"))+
+  scale_fill_manual(values=c("#333366", "#009999", "#99CC33", "#FFCC00", "#CC3366", "#990000"))+
+  # ylab("Temperature (°C)")+
+  ylab("")+
+  xlab("Month") +
+  
+  # scale_x_date(date_labels = "%b", date_breaks = "1 month", minor_breaks = "1 month", guide = guide_axis(cap = "both"))+
+  
+  scale_x_date(breaks = as.Date(c("2023-09-01", "2023-10-01", "2023-11-01",
+                                   "2023-12-01","2024-01-01", "2024-02-01", 
+                                   "2024-03-01","2024-04-01", "2024-05-01")),
+  labels = c("Sep", "", "Nov", "", "Jan", "", "Mar", "", "May"),
+  guide  = guide_axis(cap = "both"))+
+
+
+ scale_y_continuous(
+  limits = c(-45, 50),
+  breaks = c(-45, -40, -35, -30, -25, -20, -15, -10, -5, 0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50),
+  labels = c("", -40, "", -30, "", -20, "", -10, "", 0, "", 10, "", 20, "", 30, "", 40, "", 50),
+  expand = c(0, 0),
+  sec.axis = sec_axis(
+    ~ . * 1,
+    breaks = c(-45, -40, -35, -30, -25, -20, -15, -10, -5, 0),
+    labels = c("", -40, "", -30, "", -20, "", -10, "", 0),
+    name = ""
+  ),
+  guide = guide_axis(cap = "both")
+)+
+  
+ theme_bw(base_size = 6) +
+  theme(legend.position = "none",
+    legend.key.size = unit(1, 'lines'),
+    strip.background = element_rect(color = "#CCCCCC"),
+    panel.grid = element_blank(),
+    panel.border = element_blank(),
+    axis.line.x = element_line(size = 0.20, color = "black"),
+    axis.line.y = element_line(size = 0.20, color = "black"),
+    axis.text = element_text(size = 6),
+    axis.text.y = element_blank(),
+    axis.ticks = element_line(size = 0.20, color = "black"),
+    axis.ticks.length = unit(0.2, 'lines'),        
+    axis.text.x = element_text(color = c("black"), angle = 0, vjust = 0.5, hjust = 0.5))+
+    coord_cartesian(xlim = c(as.Date("2023-08-25"), as.Date("2024-05-09")), ylim = c(-40, 45), expand = TRUE, default = FALSE, clip = "on")
+
+
+f1_pima
+
+
+Overstory_species_CH <- f1_lala|f1_pima 
+
+Overstory_species_CH
+
+
+# ggsave("NEW_Overstory_species_CH_v10.pdf", plot=Overstory_species_CH, width=4.40, height=4.5, units ="in", bg = "transparent", dpi = 300, path="~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures")
+
+
+
+f1_chca <- ggplot()+
+
+      geom_ribbon(aes(x = as.Date(Date), ymax = Tmax, ymin = Tmin), data = subset(subset(wdat_0b, Treatment %in% "-2.25")), lty = 1, lwd = 0.05, alpha = 0.2, color = "#333366", fill = "#333366") +
+
+        geom_ribbon(aes(x = as.Date(Date), ymax = Tmax, ymin = Tmin), data = subset(subset(wdat_0b, Treatment %in% "9")), lty = 1, lwd = 0.05, alpha = 0.2, color = "#990000", fill = "#990000") +
+
+            geom_line(aes(x = as.Date(Date), y = Temp), data = subset(subset(wdat_0b, Treatment %in% "-2.25")), size=0.3, alpha=0.8, color = "#333366", stat="summary") +
+  
+          geom_line(aes(x = as.Date(Date), y = Temp), data = subset(subset(wdat_0b, Treatment %in% "9")), size=0.3, alpha=0.8, color = "#990000", stat="summary") +
+  
+    geom_hline(yintercept=0, size=0.2, lty=3)+
+  
+   geom_smooth(aes(x = Date, y = LTE,  color = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "C"), Species %in% "CHCA"), size=0.6, method = "loess", stat = "summary", se=F) +
+  
+      geom_point(aes(x = Date, y = LTE, group = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "C"), Species %in% "CHCA"), stat="summary", size=1.3, shape=21, color="black")+
+      geom_point(aes(x = Date, y = LTE, color = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "C"), Species %in% "CHCA"), stat="summary", size=1)+
+  
+  scale_color_manual(values=c("#333366", "#009999", "#99CC33", "#FFCC00", "#CC3366", "#990000"))+
+  scale_fill_manual(values=c("#333366", "#009999", "#99CC33", "#FFCC00", "#CC3366", "#990000"))+
+  # ylab("Temperature (°C)")+
+  ylab("")+
+  
+  xlab("Month") + 
+
+    scale_x_date(breaks = as.Date(c("2023-09-01", "2023-10-01", "2023-11-01",
+                                   "2023-12-01","2024-01-01", "2024-02-01", 
+                                   "2024-03-01","2024-04-01", "2024-05-01")),
+  labels = c("Sep", "", "Nov", "", "Jan", "", "Mar", "", "May"),
+  guide  = guide_axis(cap = "both"))+
+
+  
+ scale_y_continuous(
+  limits = c(-45, 50),
+  breaks = c(-45, -40, -35, -30, -25, -20, -15, -10, -5, 0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50),
+  labels = c("", -40, "", -30, "", -20, "", -10, "", 0, "", 10, "", 20, "", 30, "", 40, "", 50),
+  expand = c(0, 0),
+  sec.axis = sec_axis(
+    ~ . * 1,
+    breaks = c(-45, -40, -35, -30, -25, -20, -15, -10, -5, 0),
+    labels = c("", -40, "", -30, "", -20, "", -10, "", 0),
+    name = ""
+  ),
+  guide = guide_axis(cap = "both")
+)+
+  
+ theme_bw(base_size = 6) +
+  theme(legend.position = "none",
+    legend.key.size = unit(1, 'lines'),
+    strip.background = element_rect(color = "#CCCCCC"),
+    panel.grid = element_blank(),
+    panel.border = element_blank(),
+    axis.line.x = element_line(size = 0.20, color = "black"),
+    axis.line.y = element_line(size = 0.20, color = "black"),
+    axis.text = element_text(size = 6),
+    axis.text.y = element_blank(),
+    axis.ticks = element_line(size = 0.20, color = "black"),
+    axis.ticks.length = unit(0.2, 'lines'),        
+    axis.text.x = element_text(color = c("black"), angle = 0, vjust = 0.5, hjust = 0.5))+
+    coord_cartesian(xlim = c(as.Date("2023-08-25"), as.Date("2024-05-15")), ylim = c(-40, 45), expand = TRUE, default = FALSE, clip = "on")
+
+f1_chca
+
+
+
+ 
+f1_rhgr <- ggplot()+
+
+      geom_ribbon(aes(x = as.Date(Date), ymax = Tmax, ymin = Tmin), data = subset(subset(wdat_0b, Treatment %in% "-2.25")), lty = 1, lwd = 0.05, alpha = 0.2, color = "#333366", fill = "#333366") +
+
+        geom_ribbon(aes(x = as.Date(Date), ymax = Tmax, ymin = Tmin), data = subset(subset(wdat_0b, Treatment %in% "9")), lty = 1, lwd = 0.05, alpha = 0.2, color = "#990000", fill = "#990000") +
+
+            geom_line(aes(x = as.Date(Date), y = Temp), data = subset(subset(wdat_0b, Treatment %in% "-2.25")), size=0.3, alpha=0.8, color = "#333366", stat="summary") +
+  
+          geom_line(aes(x = as.Date(Date), y = Temp), data = subset(subset(wdat_0b, Treatment %in% "9")), size=0.3, alpha=0.8, color = "#990000", stat="summary") +
+  
+    geom_hline(yintercept=0, size=0.2, lty=3)+
+  
+   geom_smooth(aes(x = Date, y = LTE,  color = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "C"), Species %in% "RHGR"), size=0.6, method = "loess", stat = "summary", se=F) +
+  
+      geom_point(aes(x = Date, y = LTE, group = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "C"), Species %in% "RHGR"), stat="summary", size=1.3, shape=21, color="black")+
+      geom_point(aes(x = Date, y = LTE, color = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "C"), Species %in% "RHGR"), stat="summary", size=1)+
+  
+  scale_color_manual(values=c("#333366", "#009999", "#99CC33", "#FFCC00", "#CC3366", "#990000"))+
+  scale_fill_manual(values=c("#333366", "#009999", "#99CC33", "#FFCC00", "#CC3366", "#990000"))+
+  # ylab("Temperature (°C)")+
+  ylab("")+
+  
+  xlab("Month") + 
+
+    scale_x_date(breaks = as.Date(c("2023-09-01", "2023-10-01", "2023-11-01",
+                                   "2023-12-01","2024-01-01", "2024-02-01", 
+                                   "2024-03-01","2024-04-01", "2024-05-01")),
+  labels = c("Sep", "", "Nov", "", "Jan", "", "Mar", "", "May"),
+  guide  = guide_axis(cap = "both"))+
+
+  
+ scale_y_continuous(
+  limits = c(-45, 50),
+  breaks = c(-45, -40, -35, -30, -25, -20, -15, -10, -5, 0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50),
+  labels = c("", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""),
+  expand = c(0, 0),
+  sec.axis = sec_axis(
+    ~ . * 1,
+    breaks = c(-45, -40, -35, -30, -25, -20, -15, -10, -5, 0),
+    labels = c("", -40, "", -30, "", -20, "", -10, "", 0),
+    name = ""
+  ),
+  guide = guide_axis(cap = "both")
+)+
+  
+ theme_bw(base_size = 6) +
+  theme(legend.position = "none",
+    legend.key.size = unit(1, 'lines'),
+    strip.background = element_rect(color = "#CCCCCC"),
+    panel.grid = element_blank(),
+    panel.border = element_blank(),
+    axis.line.x = element_line(size = 0.20, color = "black"),
+    axis.line.y = element_line(size = 0.20, color = "black"),
+    axis.text = element_text(size = 6),
+    # axis.text.y = element_blank(),
+    axis.ticks = element_line(size = 0.20, color = "black"),
+    axis.ticks.length = unit(0.2, 'lines'),        
+    axis.text.x = element_text(color = c("black"), angle = 0, vjust = 0.5, hjust = 0.5))+
+    coord_cartesian(xlim = c(as.Date("2023-08-25"), as.Date("2024-05-15")), ylim = c(-40, 45), expand = TRUE, default = FALSE, clip = "on")
+
+f1_rhgr
+
+
+
+Understory_species_CH <- f1_chca|f1_rhgr
+
+Understory_species_CH
+
+
+# ggsave("NEW_Understory_species_CH_v1.pdf", plot=Understory_species_CH, width=4.40, height=4.5, units ="in", bg = "transparent", dpi = 300, path="~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures")
+
+
+All_species_CH <- f1_lala|f1_pima|f1_chca|f1_rhgr
+
+All_species_CH
+
+
+
+All_species_CH <- f1_lala + plot_spacer() + f1_pima + plot_spacer() + f1_chca + plot_spacer() + f1_rhgr +
+  plot_layout(widths = c(4, -1.1, 4, -1.1, 4, -1.1, 4), guides = "collect")
+
+All_species_CH
+
+
+# ggsave("NEW_All_species_CH_v15.png", plot=All_species_CH, width=7.60, height=5.0, units ="in", bg = "transparent", dpi = 1000, path="~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures")
+
+
+
+## New supplementary figure
+
+
+f1_lala_1 <- ggplot()+
+ 
+  geom_hline(yintercept=0, size=0.2, lty=3)+
+ 
+    geom_smooth(aes(x = Date, y = LTE,  color = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "C"), Species %in% "LALA" & Treatment %in% c("-2.25", "0")), size=0.6, method = "loess", stat = "summary", se=F) +
+
+      geom_point(aes(x = Date, y = LTE, group = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "C"), Species %in% "LALA" & Treatment %in% c("-2.25", "0")), stat="summary", size=1.3, shape=21, color="black")+
+      geom_point(aes(x = Date, y = LTE, color = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "C"), Species %in% "LALA" & Treatment %in% c("-2.25", "0")), stat="summary", size=1)+
+  
+  
+  scale_color_manual(values=c("#333366", "#009999", "#99CC33", "#FFCC00", "#CC3366", "#990000"))+
+  scale_fill_manual(values=c("#333366", "#009999", "#99CC33", "#FFCC00", "#CC3366", "#990000"))+
+  # ylab("Temperature (°C)")+
+  ylab("")+
+  xlab("Month") +
+  
+  # scale_x_date(date_labels = "%b", date_breaks = "1 month", minor_breaks = "1 month", guide = guide_axis(cap = "both"))+
+  
+  scale_x_date(breaks = as.Date(c("2023-09-01", "2023-10-01", "2023-11-01",
+                                   "2023-12-01","2024-01-01", "2024-02-01", 
+                                   "2024-03-01","2024-04-01", "2024-05-01")),
+  labels = c("Sep", "", "Nov", "", "Jan", "", "Mar", "", "May"),
+  guide  = guide_axis(cap = "both"))+
+
+ scale_y_continuous(
+  limits = c(-45, 0),
+  breaks = c(-45, -40, -35, -30, -25, -20, -15, -10, -5, 0),
+  labels = c("", -40, "", -30, "", -20, "", -10, "", 0),
+  guide = guide_axis(cap = "both"))+
+  
+  
+ theme_bw(base_size = 6) +
+  theme(legend.position = "none",
+    legend.key.size = unit(1, 'lines'),
+    strip.background = element_rect(color = "#CCCCCC"),
+    panel.grid = element_blank(),
+    panel.border = element_blank(),
+    axis.line.x = element_line(size = 0.20, color = "black"),
+    axis.line.y = element_line(size = 0.20, color = "black"),
+    axis.text = element_text(size = 6),
+    axis.ticks = element_line(size = 0.20, color = "black"),
+    axis.ticks.length = unit(0.15, 'lines'),        
+    axis.text.x = element_text(color = c("black"), angle = 0, vjust = 0.5, hjust = 0.5))+
+    coord_cartesian(xlim = c(as.Date("2023-08-25"), as.Date("2024-05-09")), ylim = c(-35, -10), expand = TRUE, default = FALSE, clip = "on")
+
+f1_lala_1
+
+
+f1_lala_2 <- ggplot()+
+ 
+  geom_hline(yintercept=0, size=0.2, lty=3)+
+ 
+    geom_smooth(aes(x = Date, y = LTE,  color = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "C"), Species %in% "LALA" & Treatment %in% c("-2.25", "2.25")), size=0.6, method = "loess", stat = "summary", se=F) +
+
+      geom_point(aes(x = Date, y = LTE, group = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "C"), Species %in% "LALA" & Treatment %in% c("-2.25", "2.25")), stat="summary", size=1.3, shape=21, color="black")+
+      geom_point(aes(x = Date, y = LTE, color = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "C"), Species %in% "LALA" & Treatment %in% c("-2.25", "2.25")), stat="summary", size=1)+
+  
+  
+  scale_color_manual(values=c("#333366", "#99CC33", "#FFCC00", "#CC3366", "#990000"))+
+  scale_fill_manual(values=c("#333366", "#99CC33", "#FFCC00", "#CC3366", "#990000"))+
+  # ylab("Temperature (°C)")+
+  ylab("")+
+  xlab("Month") +
+  
+  # scale_x_date(date_labels = "%b", date_breaks = "1 month", minor_breaks = "1 month", guide = guide_axis(cap = "both"))+
+  
+  scale_x_date(breaks = as.Date(c("2023-09-01", "2023-10-01", "2023-11-01",
+                                   "2023-12-01","2024-01-01", "2024-02-01", 
+                                   "2024-03-01","2024-04-01", "2024-05-01")),
+  labels = c("Sep", "", "Nov", "", "Jan", "", "Mar", "", "May"),
+  guide  = guide_axis(cap = "both"))+
+
+ scale_y_continuous(
+  limits = c(-45, 0),
+  breaks = c(-45, -40, -35, -30, -25, -20, -15, -10, -5, 0),
+  labels = c("", -40, "", -30, "", -20, "", -10, "", 0),
+  guide = guide_axis(cap = "both"))+
+  
+  
+ theme_bw(base_size = 6) +
+  theme(legend.position = "none",
+    legend.key.size = unit(1, 'lines'),
+    strip.background = element_rect(color = "#CCCCCC"),
+    panel.grid = element_blank(),
+    panel.border = element_blank(),
+    axis.line.x = element_line(size = 0.20, color = "black"),
+    axis.line.y = element_line(size = 0.20, color = "black"),
+    axis.text = element_text(size = 6),
+    axis.ticks = element_line(size = 0.20, color = "black"),
+    axis.ticks.length = unit(0.15, 'lines'),        
+    axis.text.x = element_text(color = c("black"), angle = 0, vjust = 0.5, hjust = 0.5))+
+    coord_cartesian(xlim = c(as.Date("2023-08-25"), as.Date("2024-05-09")), ylim = c(-35, -10), expand = TRUE, default = FALSE, clip = "on")
+
+f1_lala_2
+
+
+f1_lala_3 <- ggplot()+
+ 
+  geom_hline(yintercept=0, size=0.2, lty=3)+
+ 
+    geom_smooth(aes(x = Date, y = LTE,  color = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "C"), Species %in% "LALA" & Treatment %in% c("-2.25", "4.5")), size=0.6, method = "loess", stat = "summary", se=F) +
+
+      geom_point(aes(x = Date, y = LTE, group = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "C"), Species %in% "LALA" & Treatment %in% c("-2.25", "4.5")), stat="summary", size=1.3, shape=21, color="black")+
+      geom_point(aes(x = Date, y = LTE, color = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "C"), Species %in% "LALA" & Treatment %in% c("-2.25", "4.5")), stat="summary", size=1)+
+  
+  
+  scale_color_manual(values=c("#333366", "#FFCC00", "#CC3366", "#990000"))+
+  scale_fill_manual(values=c("#333366", "#FFCC00", "#CC3366", "#990000"))+
+  # ylab("Temperature (°C)")+
+  ylab("")+
+  xlab("Month") +
+  
+  # scale_x_date(date_labels = "%b", date_breaks = "1 month", minor_breaks = "1 month", guide = guide_axis(cap = "both"))+
+  
+  scale_x_date(breaks = as.Date(c("2023-09-01", "2023-10-01", "2023-11-01",
+                                   "2023-12-01","2024-01-01", "2024-02-01", 
+                                   "2024-03-01","2024-04-01", "2024-05-01")),
+  labels = c("Sep", "", "Nov", "", "Jan", "", "Mar", "", "May"),
+  guide  = guide_axis(cap = "both"))+
+
+ scale_y_continuous(
+  limits = c(-45, 0),
+  breaks = c(-45, -40, -35, -30, -25, -20, -15, -10, -5, 0),
+  labels = c("", -40, "", -30, "", -20, "", -10, "", 0),
+  guide = guide_axis(cap = "both"))+
+  
+  
+ theme_bw(base_size = 6) +
+  theme(legend.position = "none",
+    legend.key.size = unit(1, 'lines'),
+    strip.background = element_rect(color = "#CCCCCC"),
+    panel.grid = element_blank(),
+    panel.border = element_blank(),
+    axis.line.x = element_line(size = 0.20, color = "black"),
+    axis.line.y = element_line(size = 0.20, color = "black"),
+    axis.text = element_text(size = 6),
+    axis.ticks = element_line(size = 0.20, color = "black"),
+    axis.ticks.length = unit(0.15, 'lines'),        
+    axis.text.x = element_text(color = c("black"), angle = 0, vjust = 0.5, hjust = 0.5))+
+    coord_cartesian(xlim = c(as.Date("2023-08-25"), as.Date("2024-05-09")), ylim = c(-35, -10), expand = TRUE, default = FALSE, clip = "on")
+
+f1_lala_3
+
+
+f1_lala_4 <- ggplot()+
+ 
+  geom_hline(yintercept=0, size=0.2, lty=3)+
+ 
+    geom_smooth(aes(x = Date, y = LTE,  color = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "C"), Species %in% "LALA" & Treatment %in% c("-2.25", "6.75")), size=0.6, method = "loess", stat = "summary", se=F) +
+
+      geom_point(aes(x = Date, y = LTE, group = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "C"), Species %in% "LALA" & Treatment %in% c("-2.25", "6.75")), stat="summary", size=1.3, shape=21, color="black")+
+      geom_point(aes(x = Date, y = LTE, color = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "C"), Species %in% "LALA" & Treatment %in% c("-2.25", "6.75")), stat="summary", size=1)+
+  
+  
+  scale_color_manual(values=c("#333366", "#CC3366", "#990000"))+
+  scale_fill_manual(values=c("#333366", "#CC3366", "#990000"))+
+  # ylab("Temperature (°C)")+
+  ylab("")+
+  xlab("Month") +
+  
+  # scale_x_date(date_labels = "%b", date_breaks = "1 month", minor_breaks = "1 month", guide = guide_axis(cap = "both"))+
+  
+  scale_x_date(breaks = as.Date(c("2023-09-01", "2023-10-01", "2023-11-01",
+                                   "2023-12-01","2024-01-01", "2024-02-01", 
+                                   "2024-03-01","2024-04-01", "2024-05-01")),
+  labels = c("Sep", "", "Nov", "", "Jan", "", "Mar", "", "May"),
+  guide  = guide_axis(cap = "both"))+
+
+ scale_y_continuous(
+  limits = c(-45, 0),
+  breaks = c(-45, -40, -35, -30, -25, -20, -15, -10, -5, 0),
+  labels = c("", -40, "", -30, "", -20, "", -10, "", 0),
+  guide = guide_axis(cap = "both"))+
+  
+  
+ theme_bw(base_size = 6) +
+  theme(legend.position = "none",
+    legend.key.size = unit(1, 'lines'),
+    strip.background = element_rect(color = "#CCCCCC"),
+    panel.grid = element_blank(),
+    panel.border = element_blank(),
+    axis.line.x = element_line(size = 0.20, color = "black"),
+    axis.line.y = element_line(size = 0.20, color = "black"),
+    axis.text = element_text(size = 6),
+    axis.ticks = element_line(size = 0.20, color = "black"),
+    axis.ticks.length = unit(0.15, 'lines'),        
+    axis.text.x = element_text(color = c("black"), angle = 0, vjust = 0.5, hjust = 0.5))+
+    coord_cartesian(xlim = c(as.Date("2023-08-25"), as.Date("2024-05-09")), ylim = c(-35, -10), expand = TRUE, default = FALSE, clip = "on")
+
+f1_lala_4
+
+
+f1_lala_5 <- ggplot()+
+ 
+  geom_hline(yintercept=0, size=0.2, lty=3)+
+ 
+    geom_smooth(aes(x = Date, y = LTE,  color = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "C"), Species %in% "LALA" & Treatment %in% c("-2.25", "9")), size=0.6, method = "loess", stat = "summary", se=F) +
+
+      geom_point(aes(x = Date, y = LTE, group = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "C"), Species %in% "LALA" & Treatment %in% c("-2.25", "9")), stat="summary", size=1.3, shape=21, color="black")+
+      geom_point(aes(x = Date, y = LTE, color = as.factor(Treatment)), data = subset(subset(initial.ch, Season %in% "C"), Species %in% "LALA" & Treatment %in% c("-2.25", "9")), stat="summary", size=1)+
+  
+  
+  scale_color_manual(values=c("#333366", "#990000"))+
+  scale_fill_manual(values=c("#333366", "#990000"))+
+  # ylab("Temperature (°C)")+
+  ylab("")+
+  xlab("Month") +
+  
+  # scale_x_date(date_labels = "%b", date_breaks = "1 month", minor_breaks = "1 month", guide = guide_axis(cap = "both"))+
+  
+  scale_x_date(breaks = as.Date(c("2023-09-01", "2023-10-01", "2023-11-01",
+                                   "2023-12-01","2024-01-01", "2024-02-01", 
+                                   "2024-03-01","2024-04-01", "2024-05-01")),
+  labels = c("Sep", "", "Nov", "", "Jan", "", "Mar", "", "May"),
+  guide  = guide_axis(cap = "both"))+
+
+ scale_y_continuous(
+  limits = c(-45, 0),
+  breaks = c(-45, -40, -35, -30, -25, -20, -15, -10, -5, 0),
+  labels = c("", -40, "", -30, "", -20, "", -10, "", 0),
+  guide = guide_axis(cap = "both"))+
+  
+  
+ theme_bw(base_size = 6) +
+  theme(legend.position = "none",
+    legend.key.size = unit(1, 'lines'),
+    strip.background = element_rect(color = "#CCCCCC"),
+    panel.grid = element_blank(),
+    panel.border = element_blank(),
+    axis.line.x = element_line(size = 0.20, color = "black"),
+    axis.line.y = element_line(size = 0.20, color = "black"),
+    axis.text = element_text(size = 6),
+    axis.ticks = element_line(size = 0.20, color = "black"),
+    axis.ticks.length = unit(0.15, 'lines'),        
+    axis.text.x = element_text(color = c("black"), angle = 0, vjust = 0.5, hjust = 0.5))+
+    coord_cartesian(xlim = c(as.Date("2023-08-25"), as.Date("2024-05-09")), ylim = c(-35, -10), expand = TRUE, default = FALSE, clip = "on")
+
+f1_lala_5
+
+
+
+CH_LALA_comparison <- f1_lala_1|f1_lala_2|f1_lala_3|f1_lala_4|f1_lala_5
+
+CH_LALA_comparison <- f1_lala_1 + plot_spacer() + f1_lala_2 + plot_spacer() + f1_lala_3 + plot_spacer() + f1_lala_4 + plot_spacer() + f1_lala_5 + 
+  plot_layout(widths = c(4, -1.02, 4, -1.02, 4, -1.02, 4, -1.02, 4), guides = "collect")
+
+CH_LALA_comparison
+
+# ggsave("NEW_CH_LALA_comparison_CH_v4.pdf", plot=CH_LALA_comparison, width=7.50, height=3.5, units ="in", bg = "transparent", dpi = 300, path="~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures")
+
+
+
+```
+
+
+```{r}
+
+
+str(dat_filt)
+str(initial.ch_joined)
+
+
+summary_tab <- initial.ch_joined %>%
+  filter(!is.na(LTE)) %>%
+  group_by(Species, Treatment, Collection, Date) %>%
+  summarise(
+    n_LTE    = n(),
+    mean_LTE = round(mean(LTE), 2),
+    sd_LTE   = round(sd(LTE), 2),
+    .groups  = "drop"
+  ) %>%
+  mutate(`Mean ± SD` = paste0(mean_LTE, " ± ", sd_LTE))
+
+summary_tab
+
+
+# write.csv(
+#   summary_tab,
+#   file = "~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures/LTE_summary_by_species_treatment_collection.csv",
+#   row.names = FALSE
+# )
+
+
+
+```
+
