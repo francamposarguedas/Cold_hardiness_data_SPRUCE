@@ -3750,3 +3750,165 @@ Year_RHGR
 
 ```
 
+
+```{r Slope comparison test}
+
+library(dplyr)
+library(emmeans)
+library(multcomp)
+
+## ---- OVERSTORY (2 m) ----
+
+dat2_mod <- dat2 %>%
+  filter(!is.na(Corrected_T_2m), !is.na(LTE)) %>%
+  mutate(Collection = factor(Date),
+         Species    = factor(Species))
+
+### LALA
+d_lala <- dat2_mod %>%
+  filter(Species == "LALA") %>%
+  group_by(Collection) %>%
+  filter(n_distinct(Treatment) >= 4) %>%   # same rule as the figure
+  ungroup() %>%
+  droplevels()
+
+seasons_lala <- sort(unique(d_lala$Season))
+anova_out_lala <- list(); slopes_out_lala <- list()
+pairs_out_lala <- list(); cld_out_lala   <- list()
+
+for (s in seasons_lala) {
+  d_s <- d_lala %>% filter(Season == s) %>% droplevels()
+  m_s_lala <- lm(LTE ~ Corrected_T_2m * Collection, data = d_s)   # <- lm, no random
+  anova_out_lala[[s]]  <- anova(m_s_lala)
+  m.lst_lala <- emtrends(m_s_lala, "Collection", var = "Corrected_T_2m")
+  slopes_out_lala[[s]] <- as.data.frame(summary(m.lst_lala, infer = TRUE))
+  pairs_out_lala[[s]]  <- as.data.frame(pairs(m.lst_lala, adjust = "tukey"))
+  cld_out_lala[[s]]    <- cld(m.lst_lala, adjust = "Tukey",
+                              Letters = letters, alpha = 0.05, decreasing = TRUE)
+}
+
+table_cld_lala <- bind_rows(
+  lapply(names(cld_out_lala), function(s)
+    as.data.frame(cld_out_lala[[s]]) %>% mutate(Season = s, .before = 1))
+) %>%
+  mutate(.group = trimws(.group), Species = "LALA", .before = 1) %>%
+  rename(slope = Corrected_T_2m.trend, group = .group)
+
+
+### PIMA
+d_pima <- dat2_mod %>%
+  filter(Species == "PIMA") %>%
+  group_by(Collection) %>%
+  filter(n_distinct(Treatment) >= 4) %>%
+  ungroup() %>%
+  droplevels()
+
+seasons_pima <- sort(unique(d_pima$Season))
+anova_out_pima <- list(); slopes_out_pima <- list()
+pairs_out_pima <- list(); cld_out_pima   <- list()
+
+for (s in seasons_pima) {
+  d_s <- d_pima %>% filter(Season == s) %>% droplevels()
+  m_s_pima <- lm(LTE ~ Corrected_T_2m * Collection, data = d_s)
+  anova_out_pima[[s]]  <- anova(m_s_pima)
+  m.lst_pima <- emtrends(m_s_pima, "Collection", var = "Corrected_T_2m")
+  slopes_out_pima[[s]] <- as.data.frame(summary(m.lst_pima, infer = TRUE))
+  pairs_out_pima[[s]]  <- as.data.frame(pairs(m.lst_pima, adjust = "tukey"))
+  cld_out_pima[[s]]    <- cld(m.lst_pima, adjust = "Tukey",
+                              Letters = letters, alpha = 0.05, decreasing = TRUE)
+}
+
+table_cld_pima <- bind_rows(
+  lapply(names(cld_out_pima), function(s)
+    as.data.frame(cld_out_pima[[s]]) %>% mutate(Season = s, .before = 1))
+) %>%
+  mutate(.group = trimws(.group), Species = "PIMA", .before = 1) %>%
+  rename(slope = Corrected_T_2m.trend, group = .group)
+
+table_cld_overstory <- bind_rows(table_cld_lala, table_cld_pima) %>%
+  relocate(Species, Season) %>% arrange(Species, Season, Collection)
+
+
+## ---- UNDERSTORY (0 m) ----
+
+dat0_mod <- dat_un2 %>%
+  filter(!is.na(Corrected_T_0m), !is.na(LTE)) %>%
+  mutate(Collection = factor(Date),
+         Species    = factor(Species))
+
+### CHCA
+d_chca <- dat0_mod %>%
+  filter(Species == "CHCA") %>%
+  group_by(Collection) %>%
+  filter(n_distinct(Treatment) >= 4) %>%
+  ungroup() %>%
+  droplevels()
+
+seasons_chca <- sort(unique(d_chca$Season))
+anova_out_chca <- list(); slopes_out_chca <- list()
+pairs_out_chca <- list(); cld_out_chca   <- list()
+
+for (s in seasons_chca) {
+  d_s <- d_chca %>% filter(Season == s) %>% droplevels()
+  m_s_chca <- lm(LTE ~ Corrected_T_0m * Collection, data = d_s)   # 0m column
+  anova_out_chca[[s]]  <- anova(m_s_chca)
+  m.lst_chca <- emtrends(m_s_chca, "Collection", var = "Corrected_T_0m")
+  slopes_out_chca[[s]] <- as.data.frame(summary(m.lst_chca, infer = TRUE))
+  pairs_out_chca[[s]]  <- as.data.frame(pairs(m.lst_chca, adjust = "tukey"))
+  cld_out_chca[[s]]    <- cld(m.lst_chca, adjust = "Tukey",
+                              Letters = letters, alpha = 0.05, decreasing = TRUE)
+}
+
+table_cld_chca <- bind_rows(
+  lapply(names(cld_out_chca), function(s)
+    as.data.frame(cld_out_chca[[s]]) %>% mutate(Season = s, .before = 1))
+) %>%
+  mutate(.group = trimws(.group), Species = "CHCA", .before = 1) %>%
+  rename(slope = Corrected_T_0m.trend, group = .group)
+
+### RHGR
+d_rhgr <- dat0_mod %>%
+  filter(Species == "RHGR") %>%
+  group_by(Collection) %>%
+  filter(n_distinct(Treatment) >= 4) %>%
+  ungroup() %>%
+  droplevels()
+
+seasons_rhgr <- sort(unique(d_rhgr$Season))
+anova_out_rhgr <- list(); slopes_out_rhgr <- list()
+pairs_out_rhgr <- list(); cld_out_rhgr   <- list()
+
+for (s in seasons_rhgr) {
+  d_s <- d_rhgr %>% filter(Season == s) %>% droplevels()
+  m_s_rhgr <- lm(LTE ~ Corrected_T_0m * Collection, data = d_s)
+  anova_out_rhgr[[s]]  <- anova(m_s_rhgr)
+  m.lst_rhgr <- emtrends(m_s_rhgr, "Collection", var = "Corrected_T_0m")
+  slopes_out_rhgr[[s]] <- as.data.frame(summary(m.lst_rhgr, infer = TRUE))
+  pairs_out_rhgr[[s]]  <- as.data.frame(pairs(m.lst_rhgr, adjust = "tukey"))
+  cld_out_rhgr[[s]]    <- cld(m.lst_rhgr, adjust = "Tukey",
+                              Letters = letters, alpha = 0.05, decreasing = TRUE)
+}
+
+table_cld_rhgr <- bind_rows(
+  lapply(names(cld_out_rhgr), function(s)
+    as.data.frame(cld_out_rhgr[[s]]) %>% mutate(Season = s, .before = 1))
+) %>%
+  mutate(.group = trimws(.group), Species = "RHGR", .before = 1) %>%
+  rename(slope = Corrected_T_0m.trend, group = .group)
+
+table_cld_understory <- bind_rows(table_cld_chca, table_cld_rhgr) %>%
+  relocate(Species, Season) %>% arrange(Species, Season, Collection)
+
+table_cld_all <- bind_rows(table_cld_overstory, table_cld_understory)
+
+
+# write.csv(
+#   table_cld_all,
+#   file = "~/Desktop/PhD/WISC/Manuscripts/Exploring cold hardiness and dormancy/Exploring_CH_Figures/LTE_temperature_sensitivity_collection_v2.csv",
+#   row.names = FALSE
+# )
+# 
+
+
+```
+
